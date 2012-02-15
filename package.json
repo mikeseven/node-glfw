@@ -1,0 +1,38 @@
+{
+   "name": "node_glfw",
+   "version": "0.1.0",
+   "description": "A NodeJS wrapper around GLFW libraries",
+   "main": "index.js",
+   "author": "Mikael Bourges-Sevenier <msevenier@motorola.com>",
+   "keywords": [ "glfw", "opengl", "3d", "graphics" ],
+   "maintainers": [
+       {
+           "name": "Mikael Bourges-Sevenier",
+           "email": "mikeseven@gmail.com",
+           "twitter": "msevenier"
+       }
+   ],
+   "licenses": [
+       {
+           "type": "Apache 2.0"
+       }
+   ],
+   "repositories": [
+       {
+           "type": "git",
+           "url": "" 
+       } 
+   ],
+   "directories": {
+       "src": "src",
+       "lib": "lib",
+       "test": "test"
+   },
+   "engines": {
+       "node": ">=0.6.5"
+   },
+   "scripts": {
+       "install": "rm -rf build; node-waf configure clean build"
+   }
+}
+
