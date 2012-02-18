@@ -1,13 +1,20 @@
 #include "common.h"
 
+//#include <OpenGL/OpenGL.h>
+//#include <OpenGL/gl3.h>
+
+#define GLEW_NO_GLU
+#include <GL/glew.h>
+
 #define GLFW_INCLUDE_GL3
 #define GLFW_NO_GLU
-
-#include <GL/glew.h>
+#undef __gl_h_
 #include <GL/glfw.h>
+
 #include <cstdio>
 
 using namespace v8;
+using namespace node;
 
 #include <iostream>
 using namespace std;
@@ -51,12 +58,130 @@ JS_METHOD(GetVersion) {
 }
 
 /* Window handling */
-void keycb(int key, int action) {
-  cout<<"keycb: key="<<key<<" action="<<action<<endl;
+Persistent<Object> glfw_events;
+int lastX=0,lastY=0;
+bool windowCreated=false;
+
+void keyCB(int key, int action) {
+  HandleScope scope;
+
+  Local<Array> evt=Array::New(7);
+  evt->Set(JS_STR("type"),JS_STR(action ? "keydown" : "keyup"));
+  evt->Set(JS_STR("ctrlKey"),JS_BOOL(glfwGetKey(GLFW_KEY_LCTRL) || glfwGetKey(GLFW_KEY_RCTRL)));
+  evt->Set(JS_STR("shiftKey"),JS_BOOL(glfwGetKey(GLFW_KEY_LSHIFT) || glfwGetKey(GLFW_KEY_RSHIFT)));
+  evt->Set(JS_STR("altKey"),JS_BOOL(glfwGetKey(GLFW_KEY_LALT) || glfwGetKey(GLFW_KEY_RALT)));
+  evt->Set(JS_STR("metaKey"),JS_BOOL(glfwGetKey(GLFW_KEY_LSUPER) || glfwGetKey(GLFW_KEY_RSUPER)));
+
+  if(key==GLFW_KEY_ESC) key=27;
+  else if(key==GLFW_KEY_LSHIFT || key==GLFW_KEY_RSHIFT) key=16;
+  else if(key==GLFW_KEY_LCTRL || key==GLFW_KEY_RCTRL) key=17;
+  else if(key==GLFW_KEY_LALT || key==GLFW_KEY_RALT) key=18;
+  else if(key==GLFW_KEY_LSUPER) key=91;
+  else if(key==GLFW_KEY_RSUPER) key=93;
+  evt->Set(JS_STR("which"),JS_INT(key));
+  evt->Set(JS_STR("keyCode"),JS_INT(key));
+  evt->Set(JS_STR("charCode"),JS_INT(key));
+
+  Handle<Value> argv[2] = {
+    JS_STR(action ? "keydown" : "keyup"), // event name
+    evt
+  };
+
+  MakeCallback(glfw_events, "emit", 2, argv);
 }
 
-void mouseposcb(int x, int y) {
-  cout<<"mouseposcb: "<<x<<" "<<y<<endl;
+void mousePosCB(int x, int y) {
+  int w,h;
+  glfwGetWindowSize(&w, &h);
+  if(x<0 || x>=w) return;
+  if(y<0 || y>=h) return;
+
+  lastX=x;
+  lastY=y;
+
+  HandleScope scope;
+
+  Local<Array> evt=Array::New(5);
+  evt->Set(JS_STR("type"),JS_STR("mousemove"));
+  evt->Set(JS_STR("pageX"),JS_INT(x));
+  evt->Set(JS_STR("pageY"),JS_INT(y));
+  evt->Set(JS_STR("x"),JS_INT(x));
+  evt->Set(JS_STR("y"),JS_INT(y));
+
+  Handle<Value> argv[2] = {
+    JS_STR("mousemove"), // event name
+    evt
+  };
+
+  MakeCallback(glfw_events, "emit", 2, argv);
+}
+
+void windowSizeCB(int w, int h) {
+  HandleScope scope;
+  //cout<<"resizeCB: "<<w<<" "<<h<<endl;
+
+  Local<Array> evt=Array::New(3);
+  evt->Set(JS_STR("type"),JS_STR("resize"));
+  evt->Set(JS_STR("width"),JS_INT(w));
+  evt->Set(JS_STR("height"),JS_INT(h));
+
+  Handle<Value> argv[2] = {
+    JS_STR("resize"), // event name
+    evt
+  };
+
+  MakeCallback(glfw_events, "emit", 2, argv);
+}
+
+void mouseButtonCB(int button, int action) {
+  HandleScope scope;
+
+  Local<Array> evt=Array::New(7);
+  evt->Set(JS_STR("type"),JS_STR(action ? "mousedown" : "mouseup"));
+  evt->Set(JS_STR("button"),JS_INT(button));
+  evt->Set(JS_STR("which"),JS_INT(button));
+  evt->Set(JS_STR("x"),JS_INT(lastX));
+  evt->Set(JS_STR("y"),JS_INT(lastY));
+  evt->Set(JS_STR("pageX"),JS_INT(lastX));
+  evt->Set(JS_STR("pageY"),JS_INT(lastY));
+
+  Handle<Value> argv[2] = {
+    JS_STR(action ? "mousedown" : "mouseup"), // event name
+    evt
+  };
+
+  MakeCallback(glfw_events, "emit", 2, argv);
+}
+
+void mouseWheelCB(int pos) {
+  HandleScope scope;
+
+  Local<Array> evt=Array::New(2);
+  evt->Set(JS_STR("type"),JS_STR("mousewheel"));
+  evt->Set(JS_STR("wheelDelta"),JS_INT(pos));
+
+  Handle<Value> argv[2] = {
+    JS_STR("mousewheel"), // event name
+    evt
+  };
+
+  MakeCallback(glfw_events, "emit", 2, argv);
+}
+
+void windowRefreshCB() {
+  cout<<"windowRefreshCB"<<endl;
+}
+
+int windowCloseCB() {
+  HandleScope scope;
+
+  Handle<Value> argv[1] = {
+    JS_STR("quit"), // event name
+  };
+
+  MakeCallback(glfw_events, "emit", 1, argv);
+
+  return GL_TRUE;
 }
 
 JS_METHOD(OpenWindow) {
@@ -71,14 +196,25 @@ JS_METHOD(OpenWindow) {
   int stencilbits=args[7]->Uint32Value();
   int mode=args[8]->Uint32Value();
 
-  bool ret=glfwOpenWindow(width,height,redbits,greenbits,bluebits,alphabits,depthbits,stencilbits,mode);
-  glewInit();
+  if(!windowCreated) {
+    windowCreated=glfwOpenWindow(width,height,redbits,greenbits,bluebits,alphabits,depthbits,stencilbits,mode);
+    glewInit();
+  }
+  else
+    glfwSetWindowSize(width,height);
 
-  // input callbacks
-  glfwSetKeyCallback(keycb);
-  glfwSetMousePosCallback(mouseposcb);
+  // Set callback functions
+  glfw_events=Persistent<Object>::New(args.This()->Get(JS_STR("events"))->ToObject());
 
-  return scope.Close(JS_BOOL(ret));
+  glfwSetWindowSizeCallback( windowSizeCB );
+  glfwSetWindowRefreshCallback( windowRefreshCB );
+  glfwSetWindowCloseCallback( windowCloseCB );
+  glfwSetMousePosCallback( mousePosCB );
+  glfwSetMouseButtonCallback( mouseButtonCB );
+  glfwSetMouseWheelCallback( mouseWheelCB );
+  glfwSetKeyCallback(keyCB);
+
+  return scope.Close(JS_BOOL(windowCreated));
 }
 
 JS_METHOD(OpenWindowHint) {
@@ -259,6 +395,11 @@ JS_METHOD(Disable) {
   return scope.Close(Undefined());
 }
 
+// make sure we close everything when we exit
+void AtExit() {
+  glfwTerminate();
+}
+
 } // namespace glfw
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -271,6 +412,8 @@ JS_METHOD(Disable) {
 
 extern "C" {
 void init(Handle<Object> target) {
+  atexit(glfw::AtExit);
+
   HandleScope scope;
 
   /* GLFW initialization, termination and version querying */

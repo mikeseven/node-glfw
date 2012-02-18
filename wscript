@@ -32,7 +32,7 @@ def build(bld):
   #obj.ldflags=['/usr/local/lib/libglfw.a']
   obj.uselib=['GLFW','GLEW']
   if sys.platform.startswith('darwin'):
-    obj.framework=['OpenGL','Cocoa']
+    obj.framework=['OpenGL']
   elif sys.platform.startswith('linux'):  
     obj.ldflags = [ "-lglfw", "-lGL" ]
 

@@ -10,19 +10,19 @@ Object.defineProperty(GLFW, 'events', {
   get: function () {
     if (events) return events;
     events = new (require('events').EventEmitter);
-    var now = Date.now();
-    setInterval(function () {
-      var after = Date.now();
-      var delta = after - now;
-      now = after;
-      var data;
-      /*while (data = GLFW.pollEvent()) {
-        events.emit('event', data);
-        events.emit(data.type, data);
-      }*/
-      events.emit('tick', delta);
-    }, 16);
+    
+    var _emit=events.emit;
+    events.emit=function() {
+      var args = Array.prototype.slice.call(arguments);
+      var evt= args[1]; // args[1] is the event, args[0] is the type of event
+      //console.log("emitting event: "+require('util').inspect(args));
+      evt.preventDefault = function () {};
+      evt.stopPropagation = function () {};
+      _emit.apply(this,args);
+    };
     return events;
-  }
+  },
+  enumerable: true,
+  configurable: true
 });
 

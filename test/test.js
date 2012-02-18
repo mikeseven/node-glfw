@@ -1,4 +1,5 @@
 var glfw = require('../index');
+var util=require('util');
 var log = console.log;
 
 var version = glfw.GetVersion();
@@ -23,6 +24,23 @@ glfw.WINDOW)) {
 }
 
 glfw.SetWindowTitle("Trilinear interpolation");
+
+// testing events
+glfw.events.on('keydown',function(evt){
+  log("[keydown] "+util.inspect(evt));
+});
+
+glfw.events.on('mousemove',function(evt){
+  log("[mousemove] "+evt.x+", "+evt.y);
+});
+
+glfw.events.on('mousewheel',function(evt){
+  log("[mousewheel] "+evt.position);
+});
+
+glfw.events.on('resize',function(evt){
+  log("[resize] "+evt.width+", "+evt.height);
+});
 
 var glVersion = glfw.GetGLVersion(); // can only be called after window creation!
 log('gl ' + glVersion.major + '.' + glVersion.minor + '.' + glVersion.rev);
