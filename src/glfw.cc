@@ -3,14 +3,26 @@
 //#include <OpenGL/OpenGL.h>
 //#include <OpenGL/gl3.h>
 
+// OpenGL Graphics Includes
 #define GLEW_NO_GLU
 #include <GL/glew.h>
+#ifdef UNIX
+    #include <GL/glxew.h>
+#endif
+#if defined (_WIN32)
+    #include <GL/wglew.h>
+#endif
+
+#if defined (__APPLE__) || defined(MACOSX)
+    #include <OpenGL/OpenGL.h>
+#endif
 
 #define GLFW_INCLUDE_GL3
 #define GLFW_NO_GLU
 #undef __gl_h_
 #include <GL/glfw.h>
 
+// Includes
 #include <cstdio>
 
 using namespace v8;
@@ -186,19 +198,24 @@ int windowCloseCB() {
 
 JS_METHOD(OpenWindow) {
   HandleScope scope;
-  int width=args[0]->Uint32Value();
-  int height=args[1]->Uint32Value();
-  int redbits=args[2]->Uint32Value();
-  int greenbits=args[3]->Uint32Value();
-  int bluebits=args[4]->Uint32Value();
-  int alphabits=args[5]->Uint32Value();
-  int depthbits=args[6]->Uint32Value();
-  int stencilbits=args[7]->Uint32Value();
-  int mode=args[8]->Uint32Value();
+  int width       = args[0]->Uint32Value();
+  int height      = args[1]->Uint32Value();
+  int redbits     = args[2]->Uint32Value();
+  int greenbits   = args[3]->Uint32Value();
+  int bluebits    = args[4]->Uint32Value();
+  int alphabits   = args[5]->Uint32Value();
+  int depthbits   = args[6]->Uint32Value();
+  int stencilbits = args[7]->Uint32Value();
+  int mode        = args[8]->Uint32Value();
 
   if(!windowCreated) {
     windowCreated=glfwOpenWindow(width,height,redbits,greenbits,bluebits,alphabits,depthbits,stencilbits,mode);
     glewInit();
+    if (glewIsSupported("GL_VERSION_2_1"))
+      cout<<"Ready for OpenGL 2.1"<<endl;
+    else {
+      cout<<"Warning: Detected that OpenGL 2.1 not supported"<<endl;
+    }
   }
   else
     glfwSetWindowSize(width,height);

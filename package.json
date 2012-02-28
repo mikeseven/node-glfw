@@ -33,6 +33,7 @@
    },
    "scripts": {
        "install": "rm -rf build; node-waf configure build"
-   }
+   },
+  "dependencies": { }
 }
 
