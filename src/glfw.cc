@@ -220,6 +220,7 @@ JS_METHOD(OpenWindow) {
   else
     glfwSetWindowSize(width,height);
 
+  cout<<"CGL current context: "<<hex<<CGLGetCurrentContext()<<dec<<endl;
   // Set callback functions
   glfw_events=Persistent<Object>::New(args.This()->Get(JS_STR("events"))->ToObject());
 
