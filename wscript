@@ -22,19 +22,17 @@ def configure(conf):
   conf.check_tool("compiler_cxx")
   conf.check_tool('node_addon')
   conf.check(lib=['glfw'], uselib_store='GLFW')
-  conf.check(lib=['GLEW'], libpath=['/opt/local/lib'], uselib_store='GLEW')
 
 def build(bld):
   obj = bld.new_task_gen("cxx", "shlib", "node_addon")
   obj.target = "node_glfw"
   obj.source  = bld.path.ant_glob('src/*.cc')
-  obj.cxxflags = ["-g",'-I/opt/local/include']
-  #obj.ldflags=['/usr/local/lib/libglfw.a']
-  obj.uselib=['GLFW','GLEW']
+  obj.cxxflags = ["-g",'-I/opt/local/include','-fPIC']
+  obj.uselib=['GLFW']
   if sys.platform.startswith('darwin'):
     obj.framework=['OpenGL']
   elif sys.platform.startswith('linux'):  
-    obj.ldflags = [ "-lglfw", "-lGL" ]
+    obj.ldflags = [ "-lglfw","-lGL" ]
 
 def shutdown():
   if Options.commands['clean']:
