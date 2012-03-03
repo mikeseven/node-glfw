@@ -32,7 +32,7 @@ def build(bld):
   if sys.platform.startswith('darwin'):
     obj.framework=['OpenGL']
   elif sys.platform.startswith('linux'):  
-    obj.ldflags = [ "-lglfw","-lGL" ]
+    obj.ldflags = [ "-lglew","-lglfw","-lGL" ]
 
 def shutdown():
   if Options.commands['clean']:

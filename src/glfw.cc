@@ -1,24 +1,7 @@
 #include "common.h"
 
-//#include <OpenGL/OpenGL.h>
-//#include <OpenGL/gl3.h>
-
 // OpenGL Graphics Includes
-/*#define GLEW_NO_GLU
-#include <GL/glew.h>
-#ifdef UNIX
-    #include <GL/glxew.h>
-#endif
-#if defined (_WIN32)
-    #include <GL/wglew.h>
-#endif
-*/
-#if defined (__APPLE__) || defined(MACOSX)
-    #include <OpenGL/OpenGL.h>
-    #define GLFW_INCLUDE_GL3
-    #undef __gl_h_
-#endif
-
+#define GLFW_INCLUDE_GL3
 #define GLFW_NO_GLU
 #include <GL/glfw.h>
 
@@ -211,19 +194,10 @@ JS_METHOD(OpenWindow) {
 
   if(!windowCreated) {
     windowCreated=glfwOpenWindow(width,height,redbits,greenbits,bluebits,alphabits,depthbits,stencilbits,mode);
-    /*glewInit();
-    if (glewIsSupported("GL_VERSION_2_1"))
-      cout<<"Ready for OpenGL 2.1"<<endl;
-    else {
-      cout<<"Warning: Detected that OpenGL 2.1 not supported"<<endl;
-    }*/
   }
   else
     glfwSetWindowSize(width,height);
 
-#if defined (__APPLE__) || defined(MACOSX)
-  cout<<"CGL current context: "<<hex<<CGLGetCurrentContext()<<dec<<endl;
-#endif
   // Set callback functions
   glfw_events=Persistent<Object>::New(args.This()->Get(JS_STR("events"))->ToObject());
 
