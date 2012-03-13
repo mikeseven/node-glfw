@@ -7,5 +7,5 @@ Installation
 ------------
 You need GLFW on your machine. Go download it at https://http://www.glfw.org/.
 
-Currently, we support NodeJS 0.6.5 or above but not 0.7.x.
+Currently, we support NodeJS 0.6.5 or above.
 

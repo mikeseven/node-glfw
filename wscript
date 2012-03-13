@@ -8,7 +8,7 @@
 import Options
 import sys
 from os import unlink, symlink, popen, environ
-from os.path import exists 
+from os.path import exists, expanduser
 
 top='.'
 srcdir = "."
@@ -22,13 +22,18 @@ def configure(conf):
   conf.check_tool("compiler_cxx")
   conf.check_tool('node_addon')
   conf.check(lib=['glfw'], uselib_store='GLFW')
+  conf.check(
+    lib='AntTweakBar', 
+    includes=[expanduser('~')+'/code/AntTweakBar/include']
+  )
 
 def build(bld):
   obj = bld.new_task_gen("cxx", "shlib", "node_addon")
   obj.target = "node_glfw"
   obj.source  = bld.path.ant_glob('src/*.cc')
-  obj.cxxflags = ["-g",'-I/opt/local/include','-fPIC']
-  obj.uselib=['GLFW']
+  obj.cxxflags = ["-g",'-fPIC']
+  obj.uselib=['GLFW','ANTTWEAKBAR']
+  obj.linkflags = ['-lAntTweakBar']
   if sys.platform.startswith('darwin'):
     obj.framework=['OpenGL']
   elif sys.platform.startswith('linux'):  

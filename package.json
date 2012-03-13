@@ -3,7 +3,7 @@
    "version": "0.1.0",
    "description": "A NodeJS wrapper around GLFW libraries",
    "main": "index.js",
-   "author": "Mikael Bourges-Sevenier <msevenier@motorola.com>",
+   "author": "Mikael Bourges-Sevenier <mikeseven@gmail.com>",
    "keywords": [ "glfw", "opengl", "3d", "graphics" ],
    "maintainers": [
        {
