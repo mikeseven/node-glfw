@@ -12,11 +12,10 @@
            "twitter": "msevenier"
        }
    ],
-   "licenses": [
-       {
-           "type": "Apache 2.0"
-       }
-   ],
+   "licenses": [{
+        "type": "BSD",
+        "url": "http://github.com/mikeseven/node-glfw/raw/master/LICENSE.BSD.txt"
+    }],
    "repositories": [
        {
            "type": "git",
