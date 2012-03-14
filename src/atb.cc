@@ -110,6 +110,7 @@ JS_METHOD(AntTweakBar::Draw) {
   GLint program, ab;
   glGetIntegerv(GL_CURRENT_PROGRAM, &program);
   glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &ab);
+
   glUseProgram(NULL);
   glBindBuffer(GL_ARRAY_BUFFER, NULL);
 
@@ -132,6 +133,9 @@ JS_METHOD(AntTweakBar::Define) {
   return scope.Close(Undefined());
 }
 
+/* TODO: handle bars so they can be automatically destroyed upon
+ *
+ */
 JS_METHOD(AntTweakBar::NewBar) {
   HandleScope scope;
 
@@ -176,6 +180,11 @@ Bar::Bar(Handle<Object> wrapper) : bar(NULL)
 }
 
 Bar::~Bar () {
+  for(vector<CB*>::iterator it=cbs.begin();it!=cbs.end();++it) {
+    CB *cb=*it;
+    if(cb) delete cb;
+  }
+  cbs.clear();
   if(bar) TwDeleteBar(bar);
 }
 
@@ -192,11 +201,6 @@ Bar *Bar::New(TwBar *zbar)
 
   return v8bar;
 }
-
-struct CB {
-  Persistent<Function> getter, setter;
-  uint32_t type;
-};
 
 void TW_CALL SetCallback(const void *value, void *clientData) {
   //cout<<"in SetCallback"<<endl;
@@ -368,20 +372,17 @@ JS_METHOD(Bar::AddVar) {
   Local<Function> getter=Local<Function>::Cast(params->Get(JS_STR("getter")));
   Local<Function> setter=Local<Function>::Cast(params->Get(JS_STR("setter")));
   CB *callbacks=new CB();
+  bar->cbs.push_back(callbacks);
+  callbacks->name=strdup(*name);
   callbacks->type=type;
   callbacks->getter=Persistent<Function>::New(getter);
   if(!setter->IsUndefined())
     callbacks->setter=Persistent<Function>::New(setter);
 
   String::AsciiValue def(args[3]);
-  cout<<"[AddVarRW] name="<<*name<<" type: "<<type<<" def= "<<*def<<endl;
+  //cout<<"[AddVarRW] name="<<*name<<" type: "<<type<<" def= "<<*def<<endl;
 
   TwAddVarCB(bar->bar,*name,(TwType) type,setter->IsUndefined() ? NULL : atb::SetCallback, atb::GetCallback,callbacks,*def);
-
-  // TODO Warning: must dispose persistent<functions
-  // cb->getter.Dispose();
-  // cb->setter.Dispose();
-  // delete cb;
 
   return scope.Close(Undefined());
 }

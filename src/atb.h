@@ -11,11 +11,24 @@
 #include "common.h"
 
 #include <AntTweakBar.h>
+#include <vector>
 
 using namespace v8;
 using namespace node;
 
 namespace atb {
+
+struct CB {
+  Persistent<Function> getter, setter;
+  uint32_t type;
+  char *name;
+  CB() : type(0), name(NULL) {}
+  ~CB() {
+    getter.Dispose();
+    setter.Dispose();
+    if(name) free(name);
+  }
+};
 
 class Bar : public ObjectWrap {
 public:
@@ -38,6 +51,7 @@ private:
   static Persistent<FunctionTemplate> constructor_template;
 
   TwBar *bar;
+  std::vector<CB*> cbs;
 };
 
 class AntTweakBar : public ObjectWrap {
