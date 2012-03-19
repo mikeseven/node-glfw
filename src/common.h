@@ -8,6 +8,15 @@
 #ifndef COMMON_H_
 #define COMMON_H_
 
+// OpenGL Graphics Includes
+#define GLEW_STATIC
+#include <GL/glew.h>
+
+#define GLFW_NO_GLU
+#define GLFW_DLL
+#include <GL/glfw.h>
+
+// NodeJS includes
 #include <node.h>
 
 using namespace v8;

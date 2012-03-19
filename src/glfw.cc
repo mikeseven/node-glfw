@@ -1,18 +1,6 @@
 #include "common.h"
 #include "atb.h"
 
-// OpenGL Graphics Includes
-#if defined(__APPLE__) || defined(MACOSX)
-  #define GLFW_INCLUDE_GL3
-#else
-  #define GLEW_STATIC
-  #include <GL/glew.h>
-#endif
-
-#define GLFW_NO_GLU
-#define GLFW_DLL
-#include <GL/glfw.h>
-
 // Includes
 #include <cstdio>
 #include <cstdlib>
