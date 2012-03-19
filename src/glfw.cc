@@ -1,11 +1,17 @@
 #include "common.h"
+#include "atb.h"
 
 // OpenGL Graphics Includes
-#define GLFW_INCLUDE_GL3
-#define GLFW_NO_GLU
-#include <GL/glfw.h>
+#if defined(__APPLE__) || defined(MACOSX)
+  #define GLFW_INCLUDE_GL3
+#else
+  #define GLEW_STATIC
+  #include <GL/glew.h>
+#endif
 
-#include "atb.h"
+#define GLFW_NO_GLU
+#define GLFW_DLL
+#include <GL/glfw.h>
 
 // Includes
 #include <cstdio>
@@ -195,6 +201,14 @@ JS_METHOD(OpenWindow) {
     windowCreated=glfwOpenWindow(width,height, vmode.RedBits, vmode.GreenBits, vmode.BlueBits,
         alphabits,depthbits,stencilbits, mode);*/
     windowCreated=glfwOpenWindow(width,height,redbits,greenbits,bluebits,alphabits,depthbits,stencilbits,mode);
+
+    GLenum err = glewInit();
+    if (GLEW_OK != err)
+    {
+      /* Problem: glewInit failed, something is seriously wrong. */
+      fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+    }
+    fprintf(stdout, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
   }
   else
     glfwSetWindowSize(width,height);

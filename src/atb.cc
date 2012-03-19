@@ -1,17 +1,18 @@
-/*
- * atb.cc
- *
- *  Created on: Mar 8, 2012
- *      Author: ngk437
- */
-
-// OpenGL Graphics Includes
-#define GLFW_INCLUDE_GL3
-#define GLFW_NO_GLU
-#include <GL/glfw.h>
-
 #include "atb.h"
 
+// OpenGL Graphics Includes
+#if defined(__APPLE__) || defined(MACOSX)
+  #define GLFW_INCLUDE_GL3
+#else
+  #define GLEW_STATIC
+  #include <GL/glew.h>
+#endif
+
+#define GLFW_NO_GLU
+#define GLFW_DLL
+#include <GL/glfw.h>
+
+#include <cstring>
 #include <iostream>
 using namespace std;
 
@@ -107,19 +108,34 @@ JS_METHOD(AntTweakBar::Draw) {
   HandleScope scope;
 
   // save state
-  GLint program, ab;
+  GLint program, ab, eab;
   glGetIntegerv(GL_CURRENT_PROGRAM, &program);
-  glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &ab);
+  //glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &ab);
+  //glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &ab);
 
+  /*GLint num_shaders, num_attribs, num_uniforms;
+  glGetProgramiv(program,GL_ATTACHED_SHADERS,&num_shaders);
+  glGetProgramiv(program,GL_ACTIVE_ATTRIBUTES,&num_attribs);
+  glGetProgramiv(program,GL_ACTIVE_UNIFORMS,&num_uniforms);
+  cout<<"Current program "<<program<<": #shader "<<num_shaders<<" #attribs "<<num_attribs<<" #uniforms "<<num_uniforms<<endl;
+  int len=0;
+  glGetProgramiv(program,GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &len);
+  cout<<"max attrib length: "<<len<<endl;
+  //for(int i=0;i<num_attribs;++i) {
+  //  glGetActiveAttrib(program, i, 1024, &len, 
+  //}
+  */
   glUseProgram(NULL);
-  glBindBuffer(GL_ARRAY_BUFFER, NULL);
-
+  //glBindBuffer(GL_ARRAY_BUFFER, NULL);
+  //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, NULL);
+  
   // draw all AntTweakBars
   TwDraw();
 
   // restore state
   glUseProgram(program);
-  glBindBuffer(GL_ARRAY_BUFFER, ab);
+  //glBindBuffer(GL_ARRAY_BUFFER, ab);
+  //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eab);
 
   return scope.Close(Undefined());
 }

@@ -21,23 +21,28 @@ def set_options(opt):
 def configure(conf):
   conf.check_tool("compiler_cxx")
   conf.check_tool('node_addon')
-  conf.check(lib=['glfw'], uselib_store='GLFW')
+  conf.check(lib='glfw', uselib_store='GLFW')
+  if sys.platform.startswith('linux'): 
+    conf.check(lib='GLEW', uselib_store='GLEW')
   conf.check(
     lib='AntTweakBar', 
-    includes=[expanduser('~')+'/code/AntTweakBar/include']
+    includes=[expanduser('~')+'/code/AntTweakBar/include'],
+    uselib_store='ANTTWEAKBAR'
   )
 
 def build(bld):
   obj = bld.new_task_gen("cxx", "shlib", "node_addon")
   obj.target = "node_glfw"
   obj.source  = bld.path.ant_glob('src/*.cc')
-  obj.cxxflags = ["-g",'-fPIC']
+  obj.cxxflags = ["-g"]
   obj.uselib=['GLFW','ANTTWEAKBAR']
+  obj.include=[expanduser('~')+'/code/AntTweakBar/include']
   obj.linkflags = ['-lAntTweakBar']
   if sys.platform.startswith('darwin'):
     obj.framework=['OpenGL']
-  elif sys.platform.startswith('linux'):  
-    obj.ldflags = [ "-lglew","-lglfw","-lGL" ]
+  elif sys.platform.startswith('linux'): 
+    obj.uselib += ['GLEW']
+    obj.ldflags = [ "-lglfw","-lGLEW" ]
 
 def shutdown():
   if Options.commands['clean']:

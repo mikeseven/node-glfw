@@ -12,6 +12,7 @@
 
 #include <AntTweakBar.h>
 #include <vector>
+#include <cstdlib>
 
 using namespace v8;
 using namespace node;
