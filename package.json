@@ -1,5 +1,5 @@
 {
-   "name": "node_glfw",
+   "name": "node-glfw",
    "version": "0.1.0",
    "description": "A NodeJS wrapper around GLFW libraries",
    "main": "index.js",

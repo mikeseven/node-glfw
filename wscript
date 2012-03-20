@@ -24,7 +24,7 @@ def configure(conf):
 
 def build(bld):
   obj = bld.new_task_gen("cxx", "shlib", "node_addon")
-  obj.target = "node_glfw"
+  obj.target = "glfw"
   obj.source  = bld.path.ant_glob('src/*.cc')
   obj.cxxflags = ["-g"]
   obj.uselib=['GLEW','GLFW','ANTTWEAKBAR']

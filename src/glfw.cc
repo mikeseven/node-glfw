@@ -669,6 +669,6 @@ void init(Handle<Object> target) {
   atb::Bar::Initialize(target);
 }
 
-NODE_MODULE(node_glfw, init)
+NODE_MODULE(glfw, init)
 }
 
