@@ -1,8 +1,6 @@
 /*
  * atb.h
  *
- *  Created on: Mar 8, 2012
- *      Author: ngk437
  */
 
 #ifndef ATB_H_

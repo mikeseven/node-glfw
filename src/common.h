@@ -1,8 +1,6 @@
 /*
  * common.h
  *
- *  Created on: Dec 13, 2011
- *      Author: ngk437
  */
 
 #ifndef COMMON_H_
