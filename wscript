@@ -6,7 +6,7 @@ from os.path import exists, expanduser
 top='.'
 srcdir = "."
 blddir = "build"
-VERSION = "0.1.0"
+VERSION = "0.1.1"
 
 def set_options(opt):
   opt.tool_options('compiler_cxx')
@@ -26,7 +26,7 @@ def build(bld):
   obj = bld.new_task_gen("cxx", "shlib", "node_addon")
   obj.target = "glfw"
   obj.source  = bld.path.ant_glob('src/*.cc')
-  obj.cxxflags = ["-g"]
+  #obj.cxxflags = ["-g","-DLOGGING"]
   obj.uselib=['GLEW','GLFW','ANTTWEAKBAR']
   obj.include=[expanduser('~')+'/code/AntTweakBar/include']
   obj.linkflags = ['-lAntTweakBar']

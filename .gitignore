@@ -3,3 +3,4 @@ node_glfw.node
 .cproject
 .project
 .lock-wscript
+build

@@ -156,7 +156,9 @@ void mouseWheelCB(int pos) {
 }
 
 void windowRefreshCB() {
+  #ifdef LOGGING
   cout<<"windowRefreshCB"<<endl;
+  #endif
 }
 
 int windowCloseCB() {

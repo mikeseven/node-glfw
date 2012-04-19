@@ -1,7 +1,7 @@
 {
    "name": "node-glfw",
-   "version": "0.1.0",
-   "description": "A NodeJS wrapper around GLFW libraries",
+   "version": "0.1.1",
+   "description": "A NodeJS wrapper around GLFW library",
    "main": "index.js",
    "author": "Mikael Bourges-Sevenier <mikeseven@gmail.com>",
    "keywords": [ "glfw", "opengl", "3d", "graphics" ],
@@ -14,12 +14,12 @@
    ],
    "licenses": [{
         "type": "BSD",
-        "url": "http://github.com/mikeseven/node-glfw/raw/master/LICENSE.BSD.txt"
+        "url": "http://github.com/mikeseven/node-glfw/raw/master/LICENSES"
     }],
    "repositories": [
        {
            "type": "git",
-           "url": "" 
+           "url": "http://github.com/mikeseven/node-glfw"
        } 
    ],
    "directories": {
