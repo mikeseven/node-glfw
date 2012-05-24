@@ -96,7 +96,7 @@ JS_METHOD(AntTweakBar::Draw) {
   HandleScope scope;
 
   // save state
-  GLint program, ab, eab;
+  GLint program;//, ab, eab;
   glGetIntegerv(GL_CURRENT_PROGRAM, &program);
   //glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &ab);
   //glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &ab);

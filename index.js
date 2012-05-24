@@ -1,4 +1,4 @@
-var GLFW = module.exports = require('./build/Release/glfw.node');
+var GLFW = module.exports = require('./build/Release/node-glfw');
 
 // make sure cursor is always visible
 GLFW.Enable(GLFW.MOUSE_CURSOR);

@@ -17,7 +17,7 @@ namespace glfw {
 
 JS_METHOD(Init) {
   HandleScope scope;
-  return scope.Close(JS_BOOL(glfwInit()));
+  return scope.Close(JS_BOOL(glfwInit()==1));
 }
 
 JS_METHOD(Terminate) {
@@ -42,7 +42,7 @@ Persistent<Object> glfw_events;
 int lastX=0,lastY=0;
 bool windowCreated=false;
 
-void keyCB(int key, int action) {
+void APIENTRY keyCB(int key, int action) {
   if(!TwEventKeyGLFW(key,action)) {
     HandleScope scope;
 
@@ -72,7 +72,7 @@ void keyCB(int key, int action) {
   }
 }
 
-void mousePosCB(int x, int y) {
+void APIENTRY mousePosCB(int x, int y) {
   if(!TwEventMousePosGLFW(x,y)) {
     int w,h;
     glfwGetWindowSize(&w, &h);
@@ -100,7 +100,7 @@ void mousePosCB(int x, int y) {
   }
 }
 
-void windowSizeCB(int w, int h) {
+void APIENTRY windowSizeCB(int w, int h) {
   HandleScope scope;
   //cout<<"resizeCB: "<<w<<" "<<h<<endl;
 
@@ -117,7 +117,7 @@ void windowSizeCB(int w, int h) {
   MakeCallback(glfw_events, "emit", 2, argv);
 }
 
-void mouseButtonCB(int button, int action) {
+void APIENTRY mouseButtonCB(int button, int action) {
   if(!TwEventMouseButtonGLFW(button,action)) {
     HandleScope scope;
     Local<Array> evt=Array::New(7);
@@ -138,7 +138,7 @@ void mouseButtonCB(int button, int action) {
   }
 }
 
-void mouseWheelCB(int pos) {
+void APIENTRY mouseWheelCB(int pos) {
   if(!TwEventMouseWheelGLFW(pos)) {
     HandleScope scope;
 
@@ -155,13 +155,13 @@ void mouseWheelCB(int pos) {
   }
 }
 
-void windowRefreshCB() {
+void APIENTRY windowRefreshCB() {
   #ifdef LOGGING
   cout<<"windowRefreshCB"<<endl;
   #endif
 }
 
-int windowCloseCB() {
+int APIENTRY windowCloseCB() {
   HandleScope scope;
 
   Handle<Value> argv[1] = {
@@ -190,7 +190,7 @@ JS_METHOD(OpenWindow) {
     glfwGetDesktopMode(&vmode);
     windowCreated=glfwOpenWindow(width,height, vmode.RedBits, vmode.GreenBits, vmode.BlueBits,
         alphabits,depthbits,stencilbits, mode);*/
-    windowCreated=glfwOpenWindow(width,height,redbits,greenbits,bluebits,alphabits,depthbits,stencilbits,mode);
+    windowCreated=glfwOpenWindow(width,height,redbits,greenbits,bluebits,alphabits,depthbits,stencilbits,mode)!=0;
 
     GLenum err = glewInit();
     if (GLEW_OK != err)
@@ -206,13 +206,13 @@ JS_METHOD(OpenWindow) {
   // Set callback functions
   glfw_events=Persistent<Object>::New(args.This()->Get(JS_STR("events"))->ToObject());
 
-  glfwSetWindowSizeCallback( windowSizeCB );
-  glfwSetWindowRefreshCallback( windowRefreshCB );
-  glfwSetWindowCloseCallback( windowCloseCB );
-  glfwSetMousePosCallback( mousePosCB );
-  glfwSetMouseButtonCallback( mouseButtonCB );
-  glfwSetMouseWheelCallback( mouseWheelCB );
-  glfwSetKeyCallback(keyCB);
+  glfwSetWindowSizeCallback( (GLFWwindowsizefun) windowSizeCB );
+  glfwSetWindowRefreshCallback( (GLFWwindowrefreshfun) windowRefreshCB );
+  glfwSetWindowCloseCallback( (GLFWwindowclosefun) windowCloseCB );
+  glfwSetMousePosCallback( (GLFWmouseposfun) mousePosCB );
+  glfwSetMouseButtonCallback( (GLFWmousebuttonfun) mouseButtonCB );
+  glfwSetMouseWheelCallback( (GLFWmousewheelfun) mouseWheelCB );
+  glfwSetKeyCallback( (GLFWkeyfun)keyCB);
 
   //glfwSetMouseButtonCallback((GLFWmousebuttonfun)TwEventMouseButtonGLFW);
   //glfwSetMousePosCallback((GLFWmouseposfun)TwEventMousePosGLFW);
@@ -339,7 +339,7 @@ JS_METHOD(GetMouseWheel) {
   HandleScope scope;
   return scope.Close(JS_INT(glfwGetMouseWheel()));
 }
-GLFWAPI void GLFWAPIENTRY glfwSetMouseWheel( int pos );
+
 JS_METHOD(SetMouseWheel) {
   HandleScope scope;
   glfwSetMouseWheel(args[0]->Int32Value());
@@ -373,7 +373,7 @@ JS_METHOD(Sleep) {
 JS_METHOD(ExtensionSupported) {
   HandleScope scope;
   String::AsciiValue str(args[0]->ToString());
-  return scope.Close(JS_BOOL(glfwExtensionSupported(*str)));
+  return scope.Close(JS_BOOL(glfwExtensionSupported(*str)==1));
 }
 
 //GLFWAPI void* GLFWAPIENTRY glfwGetProcAddress( const char *procname );
