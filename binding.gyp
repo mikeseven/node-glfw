@@ -10,7 +10,7 @@
   'targets': [
     {
       #'target_name': 'glfw-<(platform)-<(target_arch)',
-      'target_name': 'node-glfw',
+      'target_name': 'glfw',
       'defines': [
         'VERSION=0.1.1'
       ],
@@ -21,13 +21,18 @@
       'conditions': [
         ['OS=="linux"', {'libraries': ['-lAntTweakBar', '-lglfw', '-lGLEW']}],
         ['OS=="mac"', {'libraries': ['-lAntTweakBar', '-lglfw', '-lGLEW', '-framework OpenGL']}],
-        ['OS=="win"', {'libraries': [
+        ['OS=="win"', {
+          'libraries': [
             'AntTweakBar64.lib',
-            'glew32s.lib', 
-            'glfwdll.lib', 
+            'glew64s.lib', 
+            'glfw64dll.lib', 
             'opengl32.lib'
-            ]
-          }
+            ],
+          'defines' : [
+            'WIN32_LEAN_AND_MEAN',
+            'VC_EXTRALEAN'
+          ]
+          },
         ],
       ],
     }

@@ -11,7 +11,7 @@
 #include <GL/glew.h>
 
 #define GLFW_NO_GLU
-#define GLFW_DLL
+//#define GLFW_DLL
 #include <GL/glfw.h>
 
 // NodeJS includes

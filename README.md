@@ -19,8 +19,8 @@ AntTweakBar allows programmers to quickly add a light and intuitive graphical us
 
 All of these libraries are cross-platform. node-glfw provides a Javascript wrapper to access native methods in GLFW and AntTweakBar. See example of usage in node-webgl/test/cube.js.
 
-Installation
-------------
+Installation (Mac, Linux)
+-------------------------
 Install GLFW and make sure examples are working. For convenience, install GLFW into your system lib/include path.
 
 Install AntTweakBar and make sure its GLFW samples are working. For convenience, install AntTweakBar libraries in your system lib path.
@@ -28,6 +28,11 @@ Install AntTweakBar and make sure its GLFW samples are working. For convenience,
 Install GLEW and make sure its tests programs are working such as visualinfo. You should install GLEW in your system lib/include path.
 
 Now you can install node-glfw, the usual way: npm install node-glfw.
+
+Installation (Windows)
+-------------------------
+Copy all deps/*.lib into your <Visual Studio>/VC/lib for 32-bit libraries, and <Visual Studio>/VC/lib/amd64 for 64-bit libraries.
+Copy all deps/*.dll into <Windows>/System32.
 
 Notes
 -----
