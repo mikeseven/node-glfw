@@ -236,7 +236,7 @@ JS_METHOD(OpenWindow) {
   //glfwSetKeyCallback((GLFWkeyfun)TwEventKeyGLFW);
   glfwSetCharCallback((GLFWcharfun)TwEventCharGLFW);
 
-  //testScene(width,height);
+  testScene(width,height);
 
   return scope.Close(JS_BOOL(windowCreated));
 }
