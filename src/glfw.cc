@@ -173,6 +173,22 @@ int APIENTRY windowCloseCB() {
   return 1;
 }
 
+void testScene(int width, int height) {
+  glViewport( 0, 0, width, height );
+
+  glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
+  glClear( GL_COLOR_BUFFER_BIT );
+  
+  glPushMatrix();
+  //glRotatef( 0, 0.0f, 0.0f, 1.0f );
+  glBegin( GL_TRIANGLES );
+    glColor3f( 1.0f, 0.0f, 0.0f ); glVertex2f( 0.0f, 1.0f );
+    glColor3f( 0.0f, 1.0f, 0.0f ); glVertex2f( 0.87f, -0.5f );
+    glColor3f( 0.0f, 0.0f, 1.0f ); glVertex2f( -0.87f, -0.5f );
+  glEnd();
+  glPopMatrix();
+}
+
 JS_METHOD(OpenWindow) {
   HandleScope scope;
   int width       = args[0]->Uint32Value();
@@ -219,6 +235,8 @@ JS_METHOD(OpenWindow) {
   //glfwSetMouseWheelCallback((GLFWmousewheelfun)TwEventMouseWheelGLFW);
   //glfwSetKeyCallback((GLFWkeyfun)TwEventKeyGLFW);
   glfwSetCharCallback((GLFWcharfun)TwEventCharGLFW);
+
+  //testScene(width,height);
 
   return scope.Close(JS_BOOL(windowCreated));
 }
