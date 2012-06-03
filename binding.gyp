@@ -16,7 +16,10 @@
       ],
       'sources': [ 'src/atb.cc', 'src/glfw.cc' ],
       'include_dirs': [
-        '$(HOME)/code/AntTweakBar/include',
+        './deps/include',
+      ],
+      'library_dirs': [
+        './deps/<(platform)',
       ],
       'conditions': [
         ['OS=="linux"', {'libraries': ['-lAntTweakBar', '-lglfw', '-lGLEW']}],
