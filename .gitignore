@@ -4,3 +4,6 @@ node_glfw.node
 .project
 .lock-wscript
 build
+.DS_Store
+Debug
+node-glfw.iml
