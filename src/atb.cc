@@ -144,9 +144,6 @@ JS_METHOD(AntTweakBar::DefineEnum) {
 }
 
 
-/* TODO: handle bars so they can be automatically destroyed upon
- *
- */
 JS_METHOD(AntTweakBar::NewBar) {
   HandleScope scope;
 
