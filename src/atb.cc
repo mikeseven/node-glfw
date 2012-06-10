@@ -214,11 +214,11 @@ Bar *Bar::New(TwBar *zbar)
 }
 
 void TW_CALL SetCallback(const void *value, void *clientData) {
-  cout<<"in SetCallback"<<endl;
+  //cout<<"in SetCallback"<<endl;
 
   HandleScope scope;
   CB *cb=static_cast<CB*>(clientData);
-  cout<<"  cb type: "<<cb->type<<endl;
+  //cout<<"  cb type: "<<cb->type<<endl;
 
   Handle<Value> argv[1];
 
@@ -383,6 +383,25 @@ void TW_CALL GetCallback(void *value, void *clientData){
   }
 }
 
+void TW_CALL SetButtonCallback(void *clientData) {
+  //cout<<"in SetButtonCallback"<<endl;
+
+  HandleScope scope;
+  CB *cb=static_cast<CB*>(clientData);
+  //cout<<"  cb type: "<<cb->type<<endl;
+
+  Handle<Value> argv[1];
+  argv[0]=Undefined();
+
+  TryCatch try_catch;
+
+  Local<Value> val=cb->setter->Call(Context::GetCurrent()->Global(), 1, argv);
+
+  if (try_catch.HasCaught())
+    FatalException(try_catch);
+
+}
+
 JS_METHOD(Bar::AddVar) {
   HandleScope scope;
   Bar *bar = UnwrapThis<Bar>(args);
@@ -435,18 +454,25 @@ JS_METHOD(Bar::RemoveAllVars) {
   return scope.Close(Undefined());
 }
 
-// TODO callback for button with user data
 JS_METHOD(Bar::AddButton) {
   HandleScope scope;
   Bar *bar = UnwrapThis<Bar>(args);
   String::AsciiValue name(args[0]);
   Local<Function> cb=Local<Function>::Cast(args[1]);
+  String::AsciiValue def(args[2]);
 
-  // TODO get userdata object from args[2]
+  CB *callbacks=NULL;
+  if(!cb->IsUndefined()) {
+    callbacks=new CB();
+    bar->cbs.push_back(callbacks);
+    callbacks->name=strdup(*name);
+    callbacks->setter=Persistent<Function>::New(cb);
+  }
 
-  String::AsciiValue def(args[3]);
-
-  TwAddButton(bar->bar,*name,NULL,NULL,*def);
+  TwAddButton(bar->bar,*name,
+              cb->IsUndefined() ? NULL : atb::SetButtonCallback,
+              callbacks,
+              *def);
   return scope.Close(Undefined());
 }
 

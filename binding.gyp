@@ -15,7 +15,7 @@
         'VERSION=0.1.1'
       ],
       'sources': [ 'src/atb.cc', 'src/glfw.cc' ],
-      'cflags' : ['-g'],
+      'cflags' : ['-O3'],
       'include_dirs': [
         './deps/include',
       ],
