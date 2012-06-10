@@ -25,6 +25,7 @@ void AntTweakBar::Initialize (Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "Draw", Draw);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "NewBar", NewBar);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "Define", Define);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "DefineEnum", DefineEnum);
 
 #define NODE_DEFINE_CONSTANT_VALUE(target, name, value)                   \
   (target)->Set(v8::String::NewSymbol(name),                         \
@@ -98,32 +99,13 @@ JS_METHOD(AntTweakBar::Draw) {
   // save state
   GLint program;//, ab, eab;
   glGetIntegerv(GL_CURRENT_PROGRAM, &program);
-  //glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &ab);
-  //glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &ab);
-
-  /*GLint num_shaders, num_attribs, num_uniforms;
-  glGetProgramiv(program,GL_ATTACHED_SHADERS,&num_shaders);
-  glGetProgramiv(program,GL_ACTIVE_ATTRIBUTES,&num_attribs);
-  glGetProgramiv(program,GL_ACTIVE_UNIFORMS,&num_uniforms);
-  cout<<"Current program "<<program<<": #shader "<<num_shaders<<" #attribs "<<num_attribs<<" #uniforms "<<num_uniforms<<endl;
-  int len=0;
-  glGetProgramiv(program,GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &len);
-  cout<<"max attrib length: "<<len<<endl;
-  //for(int i=0;i<num_attribs;++i) {
-  //  glGetActiveAttrib(program, i, 1024, &len, 
-  //}
-  */
   glUseProgram(NULL);
-  //glBindBuffer(GL_ARRAY_BUFFER, NULL);
-  //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, NULL);
   
   // draw all AntTweakBars
   TwDraw();
 
   // restore state
   glUseProgram(program);
-  //glBindBuffer(GL_ARRAY_BUFFER, ab);
-  //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eab);
 
   return scope.Close(Undefined());
 }
@@ -136,6 +118,31 @@ JS_METHOD(AntTweakBar::Define) {
 
   return scope.Close(Undefined());
 }
+
+JS_METHOD(AntTweakBar::DefineEnum) {
+  HandleScope scope;
+
+  String::AsciiValue str(args[0]);
+  Local<Array> arr=Array::Cast(*args[1]);
+  int num=args[2]->IsUndefined() ? arr->Length() : args[2]->Uint32Value();
+
+  TwEnumVal *vals=new TwEnumVal[num];
+  for(int i=0;i<num;i++) {
+    vals[i].Value=i;
+    String::AsciiValue str(arr->Get(i)->ToString());
+    vals[i].Label=strdup(*str);
+    //cout<<"  Adding value: "<<i<<" = "<<*str<<endl;
+  }
+
+  TwType type=TwDefineEnum(*str, vals, num);
+
+  for(int i=0;i<num;i++)
+    delete vals[i].Label;
+  delete[] vals;
+
+  return scope.Close(JS_INT(type));
+}
+
 
 /* TODO: handle bars so they can be automatically destroyed upon
  *
@@ -207,10 +214,11 @@ Bar *Bar::New(TwBar *zbar)
 }
 
 void TW_CALL SetCallback(const void *value, void *clientData) {
-  //cout<<"in SetCallback"<<endl;
+  cout<<"in SetCallback"<<endl;
 
   HandleScope scope;
   CB *cb=static_cast<CB*>(clientData);
+  cout<<"  cb type: "<<cb->type<<endl;
 
   Handle<Value> argv[1];
 
@@ -248,6 +256,10 @@ void TW_CALL SetCallback(const void *value, void *clientData) {
     argv[0]=arr;
     break;
   }
+  default:
+    // assuming custom user-defined type, this is the index
+    argv[0]=JS_INT(*static_cast<const uint32_t*>(value));
+    break;
   }
 
   TryCatch try_catch;
@@ -255,7 +267,7 @@ void TW_CALL SetCallback(const void *value, void *clientData) {
   Local<Value> val=cb->setter->Call(Context::GetCurrent()->Global(), 1, argv);
 
   if (try_catch.HasCaught())
-      FatalException(try_catch);
+    FatalException(try_catch);
 
 }
 
@@ -364,6 +376,10 @@ void TW_CALL GetCallback(void *value, void *clientData){
     zvalue[3] = (double)arr->Get(3)->NumberValue();
     break;
   }
+  default:
+    // assuming custom user-defined type, this is the index
+    *static_cast<uint32_t *>(value) = (uint32_t)val->Uint32Value();
+    break;
   }
 }
 
@@ -379,14 +395,18 @@ JS_METHOD(Bar::AddVar) {
   bar->cbs.push_back(callbacks);
   callbacks->name=strdup(*name);
   callbacks->type=type;
-  callbacks->getter=Persistent<Function>::New(getter);
+  if(!getter->IsUndefined())
+    callbacks->getter=Persistent<Function>::New(getter);
   if(!setter->IsUndefined())
     callbacks->setter=Persistent<Function>::New(setter);
 
   String::AsciiValue def(args[3]);
   //cout<<"[AddVarRW] name="<<*name<<" type: "<<type<<" def= "<<*def<<endl;
 
-  TwAddVarCB(bar->bar,*name,(TwType) type,setter->IsUndefined() ? NULL : atb::SetCallback, atb::GetCallback,callbacks,*def);
+  TwAddVarCB(bar->bar,*name,(TwType) type,
+          setter->IsUndefined() ? NULL : atb::SetCallback,
+          getter->IsUndefined() ? NULL : atb::GetCallback,
+          callbacks, *def);
 
   return scope.Close(Undefined());
 }

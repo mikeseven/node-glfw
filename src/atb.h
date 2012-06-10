@@ -64,6 +64,7 @@ protected:
   static JS_METHOD(WindowSize);
   static JS_METHOD(Draw);
   static JS_METHOD(Define);
+  static JS_METHOD(DefineEnum);
 
   static JS_METHOD(NewBar);
 
