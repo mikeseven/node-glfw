@@ -1,0 +1,106 @@
+<!doctype html>
+<!-- The Time Machine GitHub pages theme was designed and developed by Jon Rohan, on Feb 7, 2012. -->
+<!-- Follow him for fun. http://twitter.com/jonrohan. Tail his code on http://github.com/jonrohan -->
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <link rel="stylesheet" href="stylesheets/stylesheet.css" media="screen"/>
+  <link rel="stylesheet" href="stylesheets/pygment_trac.css"/>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script type="text/javascript" src="javascripts/script.js"></script>
+
+  <title>Node-glfw</title>
+  <meta name="description" content="nodejs bindings to GLFW &amp; AntTweakBar">
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+</head>
+
+<body>
+
+  <div class="wrapper">
+    <header>
+      <h1 class="title">Node-glfw</h1>
+    </header>
+    <div id="container">
+      <p class="tagline">nodejs bindings to GLFW &amp; AntTweakBar</p>
+      <div id="main" role="main">
+        <div class="download-bar">
+        <div class="inner">
+          <a href="https://github.com/mikeseven/node-glfw/tarball/master" class="download-button tar"><span>Download</span></a>
+          <a href="https://github.com/mikeseven/node-glfw/zipball/master" class="download-button zip"><span>Download</span></a>
+          <a href="https://github.com/mikeseven/node-glfw" class="code">View Node-glfw on GitHub</a>
+        </div>
+        <span class="blc"></span><span class="trc"></span>
+        </div>
+        <article class="markdown-body">
+          <h1>NodeJS bindings to GLFW &amp; AntTweakBar</h1>
+
+<p>This projects attempts to provide platform-independent access to windowing system and input devices on desktop/laptop computers.</p>
+
+<h2>Dependencies</h2>
+
+<ul>
+<li><p>NodeJS
+While v0.6.5+ work in many cases, some missing features for typed arrays are only available in v0.7.x. So we recommend at least v0.7.5.</p></li>
+<li><p>GLEW (<a href="http://glew.sourceforge.net/">http://glew.sourceforge.net/</a>)
+GLEW is used to find OpenGL extensions in a cross-platform manner.</p></li>
+<li><p>GLFW (<a href="http://www.glfw.org/">http://www.glfw.org/</a>)
+GLFW is a simple multi-platform framework for opening a window, creating an OpenGL context, and managing input.</p></li>
+<li><p>AntTweakBar (<a href="http://www.antisphere.com/Wiki/tools:anttweakbar">http://www.antisphere.com/Wiki/tools:anttweakbar</a>)
+AntTweakBar allows programmers to quickly add a light and intuitive graphical user interface into graphic applications to interactively tweak parameters on-screen. </p></li>
+</ul><p>All of these libraries are cross-platform. node-glfw provides a Javascript wrapper to access native methods in GLFW and AntTweakBar. See example of usage in node-webgl/test/cube.js.</p>
+
+<h2>Installation (Mac, Linux)</h2>
+
+<p>Install GLFW and make sure examples are working. For convenience, install GLFW into your system lib/include path.</p>
+
+<p>Install AntTweakBar and make sure its GLFW samples are working. For convenience, install AntTweakBar libraries in your system lib path.</p>
+
+<p>Install GLEW and make sure its tests programs are working such as visualinfo. You should install GLEW in your system lib/include path.</p>
+
+<p>Now you can install node-glfw, the usual way: npm install node-glfw.</p>
+
+<h2>Installation (Windows)</h2>
+
+<p>Copy all deps/<em>.lib into your /VC/lib for 32-bit libraries, and /VC/lib/amd64 for 64-bit libraries.
+Copy all deps/</em>.dll into /System32.</p>
+
+<h2>Notes</h2>
+
+<ul>
+<li>node-glfw is a just a platform binding so don't expect samples here. You should install node-webgl, which contains lots of tests and examples using node-glfw features including AntTweakBar. See node-webgl/test/cube.js for an example of using AntTweakBar with your webgl code.</li>
+</ul>
+        </article>
+      </div>
+    </div>
+    <footer>
+      <div class="owner">
+      <p><a href="https://github.com/mikeseven" class="avatar"><img src="https://secure.gravatar.com/avatar/becc6c0993ab69cfdfd7b884a2faa378?s=30&amp;d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-140.png" width="48" height="48"/></a> <a href="https://github.com/mikeseven">mikeseven</a> maintains <a href="https://github.com/mikeseven/node-glfw">Node-glfw</a></p>
+      </div>
+      <div class="creds">
+        <small>This page generated using <a href="https://pages.github.com/">GitHub Pages</a><br/>theme by <a href="http://twitter.com/jonrohan/">Jon Rohan</a></small>
+      </div>
+    </footer>
+  </div>
+  <div class="current-section">
+    <a href="#top">Scroll to top</a>
+    <a href="https://github.com/mikeseven/node-glfw/tarball/master" class="tar">tar</a><a href="https://github.com/mikeseven/node-glfw/zipball/master" class="zip">zip</a><a href="" class="code">source code</a>
+    <p class="name"></p>
+  </div>
+
+            <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-32803813-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+</body>
+</html>
