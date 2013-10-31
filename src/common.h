@@ -32,16 +32,6 @@ static T* UnwrapThis(const v8::Arguments& args) {
   return node::ObjectWrap::Unwrap<T>(args.This());
 }
 
-template <typename T>
-static T* UnwrapField(const Arguments &args, const int fid) {
-  return (T*) External::Unwrap(args.Holder()->GetInternalField(fid));
-}
-
-template <typename T>
-static T* UnwrapField(const AccessorInfo &args, const int fid) {
-  return (T*) External::Unwrap(args.Holder()->GetInternalField(fid));
-}
-
 v8::Handle<v8::Value> ThrowError(const char* msg) {
   return v8::ThrowException(v8::Exception::Error(v8::String::New(msg)));
 }
