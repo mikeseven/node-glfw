@@ -99,7 +99,7 @@ JS_METHOD(AntTweakBar::Draw) {
   // save state
   GLint program;//, ab, eab;
   glGetIntegerv(GL_CURRENT_PROGRAM, &program);
-  glUseProgram(NULL);
+  glUseProgram(0);
   
   // draw all AntTweakBars
   TwDraw();

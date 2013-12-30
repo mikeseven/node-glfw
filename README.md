@@ -1,7 +1,7 @@
 NodeJS bindings to GLFW
 =======================
 
-This projects attempts to provide platform-independent access to windowing system and input devices on desktop/laptop computers.
+This projects attempts to provide platform-independent access to windowing system and input devices on desktop/laptop computers using GLFW 3 and above.
 
 Dependencies
 ------------
