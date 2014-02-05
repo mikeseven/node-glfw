@@ -173,15 +173,17 @@ void APIENTRY windowFocusCB(GLFWwindow *window, int focused) {
 
 /* Input callbacks handling */
 void APIENTRY keyCB(GLFWwindow *window, int key, int scancode, int action, int mods) {
+  const char *actionNames = "keyup\0  keydown\0keypress";
+  
   if(!TwEventKeyGLFW(key,action)) {
     HandleScope scope;
 
     Local<Array> evt=Array::New(7);
-    evt->Set(JS_STR("type"),JS_STR(action ? "keydown" : "keyup"));
-    evt->Set(JS_STR("ctrlKey"),JS_BOOL(glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) || glfwGetKey(window, GLFW_KEY_RIGHT_CONTROL)));
-    evt->Set(JS_STR("shiftKey"),JS_BOOL(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT)));
-    evt->Set(JS_STR("altKey"),JS_BOOL(glfwGetKey(window, GLFW_KEY_LEFT_ALT) || glfwGetKey(window, GLFW_KEY_RIGHT_ALT)));
-    evt->Set(JS_STR("metaKey"),JS_BOOL(glfwGetKey(window, GLFW_KEY_LEFT_SUPER) || glfwGetKey(window, GLFW_KEY_RIGHT_SUPER)));
+    evt->Set(JS_STR("type"),JS_STR(actionNames + (action << 3)));
+    evt->Set(JS_STR("ctrlKey"),JS_BOOL(mods & GLFW_MOD_CONTROL));
+    evt->Set(JS_STR("shiftKey"),JS_BOOL(mods & GLFW_MOD_SHIFT));
+    evt->Set(JS_STR("altKey"),JS_BOOL(mods & GLFW_MOD_ALT));
+    evt->Set(JS_STR("metaKey"),JS_BOOL(mods & GLFW_MOD_SUPER));
 
     if(key==GLFW_KEY_ESCAPE) key=27;
     else if(key==GLFW_KEY_LEFT_SHIFT || key==GLFW_KEY_RIGHT_SHIFT) key=16;
@@ -194,7 +196,7 @@ void APIENTRY keyCB(GLFWwindow *window, int key, int scancode, int action, int m
     evt->Set(JS_STR("charCode"),JS_INT(key));
 
     Handle<Value> argv[2] = {
-      JS_STR(action ? "keydown" : "keyup"), // event name
+      JS_STR(actionNames + (action << 3)), // event name
       evt
     };
 
@@ -271,12 +273,13 @@ void APIENTRY scrollCB(GLFWwindow *window, double xoffset, double yoffset) {
     HandleScope scope;
 
     Local<Array> evt=Array::New(3);
-    evt->Set(JS_STR("type"),JS_STR("scroll"));
-    evt->Set(JS_STR("xoffset"),JS_INT(xoffset));
-    evt->Set(JS_STR("yoffset"),JS_INT(yoffset));
+    evt->Set(JS_STR("type"),JS_STR("mousewheel"));
+    evt->Set(JS_STR("wheelDeltaX"),JS_INT(xoffset*120));
+    evt->Set(JS_STR("wheelDeltaY"),JS_INT(yoffset*120));
+    evt->Set(JS_STR("wheelDelta"),JS_INT(yoffset*120));
 
     Handle<Value> argv[2] = {
-      JS_STR("scroll"), // event name
+      JS_STR("mousewheel"), // event name
       evt
     };
 

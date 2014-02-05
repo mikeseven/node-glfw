@@ -25,19 +25,27 @@ if (!window) {
   process.exit(-1);
 }
 
-glfw.SetWindowTitle("Trilinear interpolation");
+glfw.SetWindowTitle(window, "Trilinear interpolation");
 
 // testing events
 glfw.events.on('keydown', function(evt) {
   log("[keydown] " + util.inspect(evt));
 });
 
+glfw.events.on('keypress', function(evt) {
+  log("[keypress] " + util.inspect(evt));
+});
+
+glfw.events.on('keyup', function(evt) {
+  log("[keyup] " + util.inspect(evt));
+});
+
 glfw.events.on('mousemove', function(evt) {
   log("[mousemove] " + evt.x + ", " + evt.y);
 });
 
-glfw.events.on('scroll', function(evt) {
-  log("[scroll] " + evt.xoffset + ", " + evt.yoffset);
+glfw.events.on('mousewheel', function(evt) {
+  log("[mousewheel] " + evt.wheelDeltaX + ", " + evt.wheelDeltaY);
 });
 
 glfw.events.on('resize', function(evt) {
