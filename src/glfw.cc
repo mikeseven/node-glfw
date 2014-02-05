@@ -179,7 +179,7 @@ void APIENTRY keyCB(GLFWwindow *window, int key, int scancode, int action, int m
     HandleScope scope;
 
     Local<Array> evt=Array::New(7);
-    evt->Set(JS_STR("type"),JS_STR(actionNames + (action << 3)));
+    evt->Set(JS_STR("type"), JS_STR( &actionNames[action << 3] ));
     evt->Set(JS_STR("ctrlKey"),JS_BOOL(mods & GLFW_MOD_CONTROL));
     evt->Set(JS_STR("shiftKey"),JS_BOOL(mods & GLFW_MOD_SHIFT));
     evt->Set(JS_STR("altKey"),JS_BOOL(mods & GLFW_MOD_ALT));
@@ -196,7 +196,7 @@ void APIENTRY keyCB(GLFWwindow *window, int key, int scancode, int action, int m
     evt->Set(JS_STR("charCode"),JS_INT(key));
 
     Handle<Value> argv[2] = {
-      JS_STR(actionNames + (action << 3)), // event name
+      JS_STR( &actionNames[action << 3] ), // event name
       evt
     };
 
