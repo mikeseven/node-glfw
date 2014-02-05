@@ -22,7 +22,7 @@
         './deps/<(platform)',
       ],
       'conditions': [
-        ['OS=="linux"', {'libraries': ['-lAntTweakBar', '-lglfw3', '-lGLEW']}],
+        ['OS=="linux"', {'libraries': ['-lAntTweakBar', '-lglfw3', '-lGLEW', '-lXxf86vm', '-lXi', '-lXrandr']}],
         ['OS=="mac"', {'libraries': ['-lAntTweakBar', '-lglfw3', '-lGLEW', '-framework OpenGL']}],
         ['OS=="win"', {
           'libraries': [
