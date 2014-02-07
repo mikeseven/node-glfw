@@ -59,6 +59,58 @@ JS_METHOD(SetTime) {
 
 /* @Module: monitor handling */
 
+/* TODO: Monitor configuration change callback */
+
+JS_METHOD(GetMonitors) {
+  HandleScope scope;
+  int monitor_count, mode_count, xpos, ypos, width, height;
+  int i, j;
+  GLFWmonitor **monitors = glfwGetMonitors(&monitor_count);
+  GLFWmonitor *primary = glfwGetPrimaryMonitor();
+  const GLFWvidmode *mode, *modes;
+  
+  Local<Array> js_monitors = Array::New(monitor_count);
+  Local<Object> js_monitor, js_mode;
+  Local<Array> js_modes;
+  for(i=0; i<monitor_count; i++){
+    js_monitor = Object::New();
+    js_monitor->Set(JS_STR("is_primary"), JS_BOOL(monitors[i] == primary));
+    js_monitor->Set(JS_STR("index"), JS_INT(i));
+    
+    js_monitor->Set(JS_STR("name"), JS_STR(glfwGetMonitorName(monitors[i])));
+    
+    glfwGetMonitorPos(monitors[i], &xpos, &ypos);
+    js_monitor->Set(JS_STR("pos_x"), JS_INT(xpos));
+    js_monitor->Set(JS_STR("pos_y"), JS_INT(ypos));
+    
+    glfwGetMonitorPhysicalSize(monitors[i], &width, &height);
+    js_monitor->Set(JS_STR("width_mm"), JS_INT(width));
+    js_monitor->Set(JS_STR("height_mm"), JS_INT(height));
+    
+    mode = glfwGetVideoMode(monitors[i]);
+    js_monitor->Set(JS_STR("width"), JS_INT(mode->width));
+    js_monitor->Set(JS_STR("height"), JS_INT(mode->height));
+    js_monitor->Set(JS_STR("rate"), JS_INT(mode->refreshRate));
+    
+    modes = glfwGetVideoModes(monitors[i], &mode_count);
+    js_modes = Array::New(mode_count);
+    for(j=0; j<mode_count; j++){
+      js_mode = Object::New();
+      js_mode->Set(JS_STR("width"), JS_INT(modes[j].width));
+      js_mode->Set(JS_STR("height"), JS_INT(modes[j].height));
+      js_mode->Set(JS_STR("rate"), JS_INT(modes[j].refreshRate));
+      // NOTE: Are color bits necessary?
+      js_modes->Set(JS_INT(j), js_mode);
+    }
+    js_monitor->Set(JS_STR("modes"), js_modes);
+    
+    js_monitors->Set(JS_INT(i), js_monitor);
+  }
+  
+  return scope.Close(js_monitors);
+}
+
+
 /* @Module: Window handling */
 Persistent<Object> glfw_events;
 int lastX=0,lastY=0;
@@ -325,10 +377,21 @@ JS_METHOD(CreateWindow) {
   int width       = args[0]->Uint32Value();
   int height      = args[1]->Uint32Value();
   String::Utf8Value str(args[2]->ToString());
+  int monitor_idx = args[3]->Uint32Value();
+  
   GLFWwindow* window = NULL;
+  GLFWmonitor **monitors = NULL, *monitor = NULL;
+  int monitor_count;
+  if(args.Length() >= 4 && monitor_idx >= 0){
+    monitors = glfwGetMonitors(&monitor_count);
+    if(monitor_idx >= monitor_count){
+      return ThrowError("Invalid monitor");
+    }
+    monitor = monitors[monitor_idx];
+  }
 
   if(!windowCreated) {
-    window = glfwCreateWindow(width, height, *str, NULL, NULL);
+    window = glfwCreateWindow(width, height, *str, monitor, NULL);
     if(!window) {
       // can't create window, throw error
       return ThrowError("Can't create GLFW window");
@@ -671,6 +734,9 @@ void init(Handle<Object> target) {
   /* Time */
   JS_GLFW_SET_METHOD(GetTime);
   JS_GLFW_SET_METHOD(SetTime);
+  
+  /* Monitor handling */
+  JS_GLFW_SET_METHOD(GetMonitors);
 
   /* Window handling */
   JS_GLFW_SET_METHOD(CreateWindow);

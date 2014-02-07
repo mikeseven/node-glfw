@@ -16,8 +16,21 @@ if (!glfw.Init()) {
 //glfw.WindowHint(glfw.CONTEXT_VERSION_MINOR, 2);
 //glfw.WindowHint(glfw.OPENGL_PROFILE, glfw.OPENGL_ANY_PROFILE);
 
+var monitors = glfw.GetMonitors()
+var primary;
+for(var i=0; i<monitors.length; i++){
+    if(monitors[i].is_primary){
+        /* Print info about the primary monitor */
+        log(monitors[i]);
+        primary = monitors[i];
+    }
+}
+
 var width=640, height=480;
 var window=glfw.CreateWindow(width, height,"Test");
+// Fullscreen
+// var width=primary.width, height=primary.height;
+// var window=glfw.CreateWindow(width, height, "Test", primary.index);
 
 if (!window) {
   log("Failed to open GLFW window");
