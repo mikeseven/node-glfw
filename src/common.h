@@ -10,9 +10,8 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 
-#define GLFW_NO_GLU
-#define GLFW_DLL
-#include <GL/glfw.h>
+//#define GLFW_DLL
+#include <GLFW/glfw3.h>
 
 // NodeJS includes
 #include <node.h>
@@ -32,15 +31,15 @@ static T* UnwrapThis(const v8::Arguments& args) {
   return node::ObjectWrap::Unwrap<T>(args.This());
 }
 
-v8::Handle<v8::Value> ThrowError(const char* msg) {
+inline v8::Handle<v8::Value> ThrowError(const char* msg) {
   return v8::ThrowException(v8::Exception::Error(v8::String::New(msg)));
 }
 
-v8::Handle<v8::Value> ThrowTypeError(const char* msg) {
+inline v8::Handle<v8::Value> ThrowTypeError(const char* msg) {
   return v8::ThrowException(v8::Exception::TypeError(v8::String::New(msg)));
 }
 
-v8::Handle<v8::Value> ThrowRangeError(const char* msg) {
+inline v8::Handle<v8::Value> ThrowRangeError(const char* msg) {
   return v8::ThrowException(v8::Exception::RangeError(v8::String::New(msg)));
 }
 
