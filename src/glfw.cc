@@ -286,19 +286,29 @@ void APIENTRY scrollCB(GLFWwindow *window, double xoffset, double yoffset) {
 
 JS_METHOD(testScene) {
   HandleScope scope;
-  glViewport( 0, 0, args[0]->Uint32Value(), args[1]->Uint32Value() );
+  int width = args[0]->Uint32Value();
+  int height = args[1]->Uint32Value();
+  float ratio = width / (float) height;
 
-  glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
-  glClear( GL_COLOR_BUFFER_BIT );
-  
-  glPushMatrix();
-  //glRotatef( 0, 0.0f, 0.0f, 1.0f );
-  glBegin( GL_TRIANGLES );
-    glColor3f( 1.0f, 0.0f, 0.0f ); glVertex2f( 0.0f, 1.0f );
-    glColor3f( 0.0f, 1.0f, 0.0f ); glVertex2f( 0.87f, -0.5f );
-    glColor3f( 0.0f, 0.0f, 1.0f ); glVertex2f( -0.87f, -0.5f );
+  glViewport(0, 0, width, height);
+  glClear(GL_COLOR_BUFFER_BIT);
+
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+  glMatrixMode(GL_MODELVIEW);
+
+  glLoadIdentity();
+  glRotatef((float) glfwGetTime() * 50.f, 0.f, 0.f, 1.f);
+
+  glBegin(GL_TRIANGLES);
+  glColor3f(1.f, 0.f, 0.f);
+  glVertex3f(-0.6f, -0.4f, 0.f);
+  glColor3f(0.f, 1.f, 0.f);
+  glVertex3f(0.6f, -0.4f, 0.f);
+  glColor3f(0.f, 0.f, 1.f);
+  glVertex3f(0.f, 0.6f, 0.f);
   glEnd();
-  glPopMatrix();
 
   return scope.Close(Undefined());
 }
@@ -325,6 +335,7 @@ JS_METHOD(CreateWindow) {
   GLFWwindow* window = NULL;
 
   if(!windowCreated) {
+    printf("Creating window %d x %d\n", width, height);
     window = glfwCreateWindow(width, height, *str, NULL, NULL);
     if(!window) {
       // can't create window, throw error
@@ -449,7 +460,7 @@ JS_METHOD(GetFramebufferSize) {
   if(handle) {
     GLFWwindow* window = reinterpret_cast<GLFWwindow*>(handle);
     int width, height;
-    glfwGetWindowPos(window, &width, &height);
+    glfwGetFramebufferSize(window, &width, &height);
     Local<Array> arr=Array::New(2);
     arr->Set(JS_STR("width"),JS_INT(width));
     arr->Set(JS_STR("height"),JS_INT(height));
@@ -672,6 +683,7 @@ void init(Handle<Object> target) {
   /* Window handling */
   JS_GLFW_SET_METHOD(CreateWindow);
   JS_GLFW_SET_METHOD(WindowHint);
+  JS_GLFW_SET_METHOD(DefaultWindowHints);
   JS_GLFW_SET_METHOD(DestroyWindow);
   JS_GLFW_SET_METHOD(SetWindowShouldClose);
   JS_GLFW_SET_METHOD(WindowShouldClose);

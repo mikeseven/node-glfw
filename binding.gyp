@@ -16,14 +16,16 @@
       ],
       'sources': [ 'src/atb.cc', 'src/glfw.cc' ],
       'include_dirs': [
-        './deps/include',
+        '<(module_root_dir)/deps/include',
       ],
       'library_dirs': [
-        './deps/<(platform)',
+        '<(module_root_dir)/deps/<(platform)',
       ],
       'conditions': [
         ['OS=="linux"', {'libraries': ['-lAntTweakBar', '-lglfw3', '-lGLEW']}],
-        ['OS=="mac"', {'libraries': ['-lAntTweakBar', '-lglfw3', '-lGLEW', '-framework OpenGL']}],
+        ['OS=="mac"', {
+          'libraries': ['<(module_root_dir)/deps/darwin/libglfw3.a','-lAntTweakBar', '-lGLEW', '-framework OpenGL']
+        }],
         ['OS=="win"', {
           'libraries': [
             'AntTweakBar64.lib',

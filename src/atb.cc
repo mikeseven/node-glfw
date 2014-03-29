@@ -261,7 +261,7 @@ void TW_CALL SetCallback(const void *value, void *clientData) {
 
   TryCatch try_catch;
 
-  Local<Value> val=cb->setter->Call(Context::GetCurrent()->Global(), 1, argv);
+  cb->setter->Call(Context::GetCurrent()->Global(), 1, argv);
 
   if (try_catch.HasCaught())
     FatalException(try_catch);
@@ -392,7 +392,7 @@ void TW_CALL SetButtonCallback(void *clientData) {
 
   TryCatch try_catch;
 
-  Local<Value> val=cb->setter->Call(Context::GetCurrent()->Global(), 1, argv);
+  cb->setter->Call(Context::GetCurrent()->Global(), 1, argv);
 
   if (try_catch.HasCaught())
     FatalException(try_catch);
