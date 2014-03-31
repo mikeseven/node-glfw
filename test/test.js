@@ -17,32 +17,51 @@ if (!glfw.Init()) {
 //glfw.WindowHint(glfw.OPENGL_PROFILE, glfw.OPENGL_ANY_PROFILE);
 glfw.DefaultWindowHints();
 
+var monitors = glfw.GetMonitors()
+var primary;
+for(var i=0; i<monitors.length; i++){
+    if(monitors[i].is_primary){
+        /* Print info about the primary monitor */
+        log(monitors[i]);
+        primary = monitors[i];
+    }
+}
+
 var width=640, height=480;
 var window=glfw.CreateWindow(width, height,"Test");
+
+// Fullscreen
+// var width=primary.width, height=primary.height;
+// var window=glfw.CreateWindow(width, height, "Test", primary.index);
+
+
 if (!window) {
   log("Failed to open GLFW window");
   glfw.Terminate();
   process.exit(-1);
 }
 
-glfw.MakeContextCurrent(window);
-
-var size=glfw.GetWindowSize(window);
-log("Window size: "+size.width+" x "+size.height);
-
-glfw.SetWindowTitle("Simple");
+glfw.SetWindowTitle(window, "Trilinear interpolation");
 
 // testing events
 glfw.events.on('keydown', function(evt) {
   log("[keydown] " + util.inspect(evt));
 });
 
+glfw.events.on('keypress', function(evt) {
+  log("[keypress] " + util.inspect(evt));
+});
+
+glfw.events.on('keyup', function(evt) {
+  log("[keyup] " + util.inspect(evt));
+});
+
 glfw.events.on('mousemove', function(evt) {
   log("[mousemove] " + evt.x + ", " + evt.y);
 });
 
-glfw.events.on('scroll', function(evt) {
-  log("[scroll] " + evt.xoffset + ", " + evt.yoffset);
+glfw.events.on('mousewheel', function(evt) {
+  log("[mousewheel] " + evt.wheelDeltaX + ", " + evt.wheelDeltaY);
 });
 
 glfw.events.on('resize', function(evt) {
