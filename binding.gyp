@@ -22,7 +22,7 @@
         '<(module_root_dir)/deps/<(platform)',
       ],
       'conditions': [
-        ['OS=="linux"', {'libraries': ['-lAntTweakBar', '`pkg-config --libs glfw3`', '-lGLEW']}],
+        ['OS=="linux"', {'libraries': ['-lAntTweakBar', '<!@(pkg-config --libs glfw3 glew)']}],
         ['OS=="mac"', {
           'libraries': ['<(module_root_dir)/deps/darwin/libglfw3.a','-lAntTweakBar', '-lGLEW', '-framework OpenGL']
         }],
