@@ -12,10 +12,11 @@
       #'target_name': 'glfw-<(platform)-<(target_arch)',
       'target_name': 'glfw',
       'defines': [
-        'VERSION=0.2.0'
+        'VERSION=0.3.0'
       ],
       'sources': [ 'src/atb.cc', 'src/glfw.cc' ],
       'include_dirs': [
+        "<!(node -e \"require('nan')\")",
         '<(module_root_dir)/deps/include',
       ],
       'library_dirs': [
