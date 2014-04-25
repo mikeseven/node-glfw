@@ -26,10 +26,10 @@ namespace {
 #define JS_BOOL(val) v8::Boolean::New(val)
 #define JS_RETHROW(tc) v8::Local<v8::Value>::New(tc.Exception());
 
-template <typename T>
-static T* UnwrapThis(const v8::Arguments& args) {
-  return node::ObjectWrap::Unwrap<T>(args.This());
-}
+// template <typename T>
+// static T* UnwrapThis(const v8::Arguments& args) {
+//   return node::ObjectWrap::Unwrap<T>(args.This());
+// }
 
 #define REQ_ARGS(N)                                                     \
   if (args.Length() < (N))                                              \

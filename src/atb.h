@@ -35,7 +35,7 @@ public:
   static void Initialize (Handle<Object> target);
 
 protected:
-  static Handle<Value> New (const Arguments& args);
+  static NAN_METHOD(New);
 
   static NAN_METHOD(AddVar);
   static NAN_METHOD(AddSeparator);
@@ -58,7 +58,7 @@ public:
   static void Initialize (Handle<Object> target);
 
 protected:
-  static Handle<Value> New (const Arguments& args);
+  static NAN_METHOD(New);
   static NAN_METHOD(Init);
   static NAN_METHOD(Terminate);
   static NAN_METHOD(WindowSize);

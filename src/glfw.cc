@@ -116,6 +116,18 @@ Persistent<Object> glfw_events;
 int lastX=0,lastY=0;
 bool windowCreated=false;
 
+void NAN_INLINE(CallEmitter(int argc, Handle<Value> argv[])) {
+  NanScope();
+  // MakeCallback(glfw_events, "emit", argc, argv);
+  if(NanPersistentToLocal(glfw_events)->Has(NanSymbol("emit"))) {
+    Local<Function> callback = NanPersistentToLocal(glfw_events)->Get(NanSymbol("emit")).As<Function>();
+
+    if (!callback.IsEmpty()) {
+      callback->Call(Context::GetCurrent()->Global(),argc,argv);
+    }
+  }
+}
+
 /* Window callbacks handling */
 void APIENTRY windowPosCB(GLFWwindow *window, int xpos, int ypos) {
   NanScope();
@@ -131,7 +143,7 @@ void APIENTRY windowPosCB(GLFWwindow *window, int xpos, int ypos) {
     evt
   };
 
-  MakeCallback(glfw_events, "emit", 2, argv);
+  CallEmitter(2,argv);
 }
 
 void APIENTRY windowSizeCB(GLFWwindow *window, int w, int h) {
@@ -148,7 +160,7 @@ void APIENTRY windowSizeCB(GLFWwindow *window, int w, int h) {
     evt
   };
 
-  MakeCallback(glfw_events, "emit", 2, argv);
+  CallEmitter(2,argv);
 }
 
 void APIENTRY windowFramebufferSizeCB(GLFWwindow *window, int w, int h) {
@@ -165,7 +177,7 @@ void APIENTRY windowFramebufferSizeCB(GLFWwindow *window, int w, int h) {
     evt
   };
 
-  MakeCallback(glfw_events, "emit", 2, argv);
+  CallEmitter(2,argv);
 }
 
 void APIENTRY windowCloseCB(GLFWwindow *window) {
@@ -175,7 +187,7 @@ void APIENTRY windowCloseCB(GLFWwindow *window) {
     JS_STR("quit"), // event name
   };
 
-  MakeCallback(glfw_events, "emit", 1, argv);
+  CallEmitter(1,argv);
 }
 
 void APIENTRY windowRefreshCB(GLFWwindow *window) {
@@ -190,7 +202,7 @@ void APIENTRY windowRefreshCB(GLFWwindow *window) {
     evt
   };
 
-  MakeCallback(glfw_events, "emit", 2, argv);
+  CallEmitter(2,argv);
 }
 
 void APIENTRY windowIconifyCB(GLFWwindow *window, int iconified) {
@@ -205,7 +217,7 @@ void APIENTRY windowIconifyCB(GLFWwindow *window, int iconified) {
     evt
   };
 
-  MakeCallback(glfw_events, "emit", 2, argv);
+  CallEmitter(2,argv);
 }
 
 void APIENTRY windowFocusCB(GLFWwindow *window, int focused) {
@@ -220,7 +232,7 @@ void APIENTRY windowFocusCB(GLFWwindow *window, int focused) {
     evt
   };
 
-  MakeCallback(glfw_events, "emit", 2, argv);
+  CallEmitter(2,argv);
 }
 
 /* Input callbacks handling */
@@ -252,7 +264,7 @@ void APIENTRY keyCB(GLFWwindow *window, int key, int scancode, int action, int m
       evt
     };
 
-    MakeCallback(glfw_events, "emit", 2, argv);
+    CallEmitter(2,argv);
   }
 }
 
@@ -280,7 +292,7 @@ void APIENTRY cursorPosCB(GLFWwindow* window, double x, double y) {
       evt
     };
 
-    MakeCallback(glfw_events, "emit", 2, argv);
+    CallEmitter(2,argv);
   }
 }
 
@@ -296,7 +308,7 @@ void APIENTRY cursorEnterCB(GLFWwindow* window, int entered) {
     evt
   };
 
-  MakeCallback(glfw_events, "emit", 2, argv);
+  CallEmitter(2,argv);
 }
 
 void APIENTRY mouseButtonCB(GLFWwindow *window, int button, int action, int mods) {
@@ -316,7 +328,7 @@ void APIENTRY mouseButtonCB(GLFWwindow *window, int button, int action, int mods
       evt
     };
 
-    MakeCallback(glfw_events, "emit", 2, argv);
+    CallEmitter(2,argv);
   }
 }
 
@@ -335,7 +347,7 @@ void APIENTRY scrollCB(GLFWwindow *window, double xoffset, double yoffset) {
       evt
     };
 
-    MakeCallback(glfw_events, "emit", 2, argv);
+    CallEmitter(2,argv);
   }
 }
 
@@ -427,7 +439,9 @@ NAN_METHOD(CreateWindow) {
     glfwSetWindowSize(window, width,height);
 
   // Set callback functions
-  glfw_events=Persistent<Object>::New(args.This()->Get(JS_STR("events"))->ToObject());
+  //glfw_events=Persistent<Object>::New(args.This()->Get(JS_STR("events"))->ToObject());
+  NanInitPersistent(Object,_events,args.This()->Get(JS_STR("events"))->ToObject());
+  NanAssignPersistent(Object, glfw_events, _events);
 
   // window callbacks
   glfwSetWindowPosCallback( window, windowPosCB );

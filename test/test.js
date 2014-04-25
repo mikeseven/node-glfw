@@ -81,7 +81,7 @@ glfw.SwapInterval( 1 ); // 0 for vsync off
 while(!glfw.WindowShouldClose(window) && !glfw.GetKey(window, glfw.KEY_ESCAPE)) {
   // Get window size (may be different than the requested size)
   var wsize = glfw.GetFramebufferSize(window);
-  if(wsize) log("FB size: "+wsize.width+', '+wsize.height);
+  //if(wsize) log("FB size: "+wsize.width+', '+wsize.height);
 
   glfw.testScene(wsize.width, wsize.height);
   
