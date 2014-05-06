@@ -12,18 +12,21 @@
       #'target_name': 'glfw-<(platform)-<(target_arch)',
       'target_name': 'glfw',
       'defines': [
-        'VERSION=0.1.2'
+        'VERSION=0.4.0'
       ],
       'sources': [ 'src/atb.cc', 'src/glfw.cc' ],
       'include_dirs': [
-        './deps/include',
+        "<!(node -e \"require('nan')\")",
+        '<(module_root_dir)/deps/include',
       ],
       'library_dirs': [
-        './deps/<(platform)',
+        '<(module_root_dir)/deps/<(platform)',
       ],
       'conditions': [
-        ['OS=="linux"', {'libraries': ['-lAntTweakBar', '-lglfw', '-lGLEW']}],
-        ['OS=="mac"', {'libraries': ['-lAntTweakBar', '-lglfw', '-lGLEW', '-framework OpenGL']}],
+        ['OS=="linux"', {'libraries': ['-lAntTweakBar', '<!@(pkg-config --libs glfw3 glew)']}],
+        ['OS=="mac"', {
+          'libraries': ['<(module_root_dir)/deps/darwin/libglfw3.a','-lAntTweakBar', '-lGLEW', '-framework OpenGL']
+        }],
         ['OS=="win"', {
           'libraries': [
             'AntTweakBar64.lib',
