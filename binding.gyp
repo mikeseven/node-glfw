@@ -12,7 +12,7 @@
       #'target_name': 'glfw-<(platform)-<(target_arch)',
       'target_name': 'glfw',
       'defines': [
-        'VERSION=0.3.0'
+        'VERSION=0.4.0'
       ],
       'sources': [ 'src/atb.cc', 'src/glfw.cc' ],
       'include_dirs': [

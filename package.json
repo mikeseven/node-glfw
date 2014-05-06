@@ -1,6 +1,6 @@
 {
   "name": "node-glfw",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "A NodeJS wrapper around GLFW3 library",
   "main": "index.js",
   "author": "Mikael Bourges-Sevenier <mikeseven@gmail.com>",
@@ -36,6 +36,6 @@
     "install": "node-gyp rebuild"
   },
   "dependencies": {
-    "nan": ""
+    "nan": "^0.8.0"
   }
 }
