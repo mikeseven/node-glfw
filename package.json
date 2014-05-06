@@ -1,36 +1,41 @@
 {
-   "name": "node-glfw",
-   "version": "0.2.1",
-   "description": "A NodeJS wrapper around GLFW3 library",
-   "main": "index.js",
-   "author": "Mikael Bourges-Sevenier <mikeseven@gmail.com>",
-   "keywords": [ "glfw", "opengl", "3d", "graphics" ],
-   "maintainers": [
-       {
-           "name": "Mikael Bourges-Sevenier",
-           "email": "mikeseven@gmail.com",
-           "twitter": "msevenier"
-       }
-   ],
-   "licenses": [{
-        "type": "BSD",
-        "url": "http://github.com/mikeseven/node-glfw/raw/master/LICENSES"
-    }],
-   "repository": {
-       "type": "git",
-       "url": "http://github.com/mikeseven/node-glfw"
-   },
-   "directories": {
-       "src": "src",
-       "lib": "lib",
-       "test": "test"
-   },
-   "engines": {
-       "node": "0.6.5-0.11.3"
-   },
-   "scripts": {
-       "install": "node-gyp rebuild"
-   },
-  "dependencies": { }
+  "name": "node-glfw",
+  "version": "0.3.0",
+  "description": "A NodeJS wrapper around GLFW3 library",
+  "main": "index.js",
+  "author": "Mikael Bourges-Sevenier <mikeseven@gmail.com>",
+  "keywords": [
+    "glfw",
+    "opengl",
+    "3d",
+    "graphics"
+  ],
+  "maintainers": [
+    {
+      "name": "Mikael Bourges-Sevenier",
+      "email": "mikeseven@gmail.com",
+      "twitter": "msevenier"
+    }
+  ],
+  "licenses": [
+    {
+      "type": "BSD",
+      "url": "http://github.com/mikeseven/node-glfw/raw/master/LICENSES"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/mikeseven/node-glfw"
+  },
+  "directories": {
+    "src": "src",
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "install": "node-gyp rebuild"
+  },
+  "dependencies": {
+    "nan": ""
+  }
 }
-

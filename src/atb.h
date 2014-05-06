@@ -35,13 +35,13 @@ public:
   static void Initialize (Handle<Object> target);
 
 protected:
-  static Handle<Value> New (const Arguments& args);
+  static NAN_METHOD(New);
 
-  static JS_METHOD(AddVar);
-  static JS_METHOD(AddSeparator);
-  static JS_METHOD(AddButton);
-  static JS_METHOD(RemoveVar);
-  static JS_METHOD(RemoveAllVars);
+  static NAN_METHOD(AddVar);
+  static NAN_METHOD(AddSeparator);
+  static NAN_METHOD(AddButton);
+  static NAN_METHOD(RemoveVar);
+  static NAN_METHOD(RemoveAllVars);
 
   virtual ~Bar ();
 
@@ -58,15 +58,15 @@ public:
   static void Initialize (Handle<Object> target);
 
 protected:
-  static Handle<Value> New (const Arguments& args);
-  static JS_METHOD(Init);
-  static JS_METHOD(Terminate);
-  static JS_METHOD(WindowSize);
-  static JS_METHOD(Draw);
-  static JS_METHOD(Define);
-  static JS_METHOD(DefineEnum);
+  static NAN_METHOD(New);
+  static NAN_METHOD(Init);
+  static NAN_METHOD(Terminate);
+  static NAN_METHOD(WindowSize);
+  static NAN_METHOD(Draw);
+  static NAN_METHOD(Define);
+  static NAN_METHOD(DefineEnum);
 
-  static JS_METHOD(NewBar);
+  static NAN_METHOD(NewBar);
 
   virtual ~AntTweakBar ();
 
