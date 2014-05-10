@@ -16,9 +16,14 @@ Object.defineProperty(GLFW, 'events', {
       var args = Array.prototype.slice.call(arguments);
       var evt= args[1]; // args[1] is the event, args[0] is the type of event
       //console.log("emitting event: "+require('util').inspect(args));
-      evt.preventDefault = function () {};
-      evt.stopPropagation = function () {};
-      _emit.apply(this,args);
+      if(args[0] != 'quit') {
+        evt.preventDefault = function () {};
+        evt.stopPropagation = function () {};
+      }
+      //_emit.apply(this,args);
+      events.listeners(args[0]).forEach(function(listener) {
+        listener(args[1]);        
+      });
     };
     return events;
   },
