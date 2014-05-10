@@ -58,7 +58,6 @@ glfw.Enable(glfw.STICKY_KEYS);
 glfw.SwapInterval(0 /*1*/); // 0 for vsync off
 
 log('init AntTweakBar');
-log(util.inspect(ATB,{ showHidden: true, depth: null }));
 
 ATB.Init();
 ATB.Define(" GLOBAL help='This example shows how to integrate AntTweakBar with GLFW and OpenGL.' "); // Message added to the help bar.
