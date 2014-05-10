@@ -8,7 +8,7 @@ namespace atb {
 Persistent<FunctionTemplate> AntTweakBar::constructor_template;
 
 #define DEFINE_ATB_CONSTANT(constant) \
-    NODE_DEFINE_CONSTANT_VALUE(ctor, "TYPE_" #constant, TW_TYPE_##constant);
+    NODE_DEFINE_CONSTANT_VALUE(ctor->InstanceTemplate(), "TYPE_" #constant, TW_TYPE_##constant);
 
 void AntTweakBar::Initialize (Handle<Object> target) {
   NanScope();
@@ -27,7 +27,7 @@ void AntTweakBar::Initialize (Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(ctor, "DefineEnum", DefineEnum);
 
 #define NODE_DEFINE_CONSTANT_VALUE(target, name, value)                   \
-  (target)->Set(v8::String::NewSymbol(name),                         \
+  (target)->Set(NanSymbol(name),                         \
                 v8::Integer::New(value),                               \
                 static_cast<v8::PropertyAttribute>(v8::ReadOnly|v8::DontDelete))
 
@@ -62,6 +62,10 @@ NAN_METHOD(AntTweakBar::New) {
   AntTweakBar *cl = new AntTweakBar(args.This());
   cl->Wrap(args.This());
   NanReturnValue(args.This());
+}
+
+AntTweakBar::AntTweakBar(Handle<Object> wrapper)
+{
 }
 
 AntTweakBar::~AntTweakBar () {
@@ -153,7 +157,7 @@ Persistent<FunctionTemplate> Bar::constructor_template;
 void Bar::Initialize (Handle<Object> target) {
   NanScope();
 
-  Local<FunctionTemplate> ctor = FunctionTemplate::New(New);
+  Local<FunctionTemplate> ctor = FunctionTemplate::New(Bar::New);
   NanAssignPersistent(FunctionTemplate, constructor_template, ctor);
   ctor->InstanceTemplate()->SetInternalFieldCount(1);
   ctor->SetClassName(NanSymbol("Bar"));
@@ -206,11 +210,11 @@ Bar *Bar::New(TwBar *zbar)
 }
 
 void TW_CALL SetCallback(const void *value, void *clientData) {
-  //cout<<"in SetCallback"<<endl;
+  // cout<<"in SetCallback"<<endl;
 
   NanScope();
   CB *cb=static_cast<CB*>(clientData);
-  //cout<<"  cb type: "<<cb->type<<endl;
+  // cout<<"  cb type: "<<cb->type<<endl;
 
   Handle<Value> argv[1];
 
@@ -264,8 +268,8 @@ void TW_CALL SetCallback(const void *value, void *clientData) {
 
 }
 
-void TW_CALL GetCallback(void *value, void *clientData){
-  //cout<<"in GetCallback"<<endl;
+void TW_CALL GetCallback(void *value, void *clientData) {
+  // cout<<"in GetCallback"<<endl;
 
   NanScope();
   CB *cb=static_cast<CB*>(clientData);
@@ -276,17 +280,17 @@ void TW_CALL GetCallback(void *value, void *clientData){
 
   TryCatch try_catch;
 
-  /*cout<<"  calling JS getter"<<endl;
-  Local<Context> ctx=Context::GetCurrent();
-  Local<Object> global=ctx->Global();
-  cout<<"global context: "<<*ctx<<" global object: "<<*global<<endl;
-  Handle<Value> name=cb->getter->GetName();
-  String::AsciiValue str(name);
-  cout<<"getter name: "<<*str<<" callable? "<<cb->getter->IsCallable()<<" function? "<<cb->getter->IsFunction()<<endl;
-  cout<<"  global has getter()? "<<global->Has(name->ToString())<<endl;*/
+  // cout<<"  calling JS getter"<<endl;
+  // Local<Context> ctx=Context::GetCurrent();
+  // Local<Object> global=ctx->Global();
+  // cout<<"global context: "<<*ctx<<" global object: "<<*global<<endl;
+  Local<Function> fct=NanPersistentToLocal(cb->getter);
+  // Handle<Value> name=fct->GetName();
+  // String::AsciiValue str(name);
+  // cout<<"getter name: "<<*str<<" callable? "<<fct->IsCallable()<<" function? "<<fct->IsFunction()<<endl;
+  // cout<<"  global has getter()? "<<global->Has(name->ToString())<<endl;
 
-  Local<Function> constructorHandle = NanPersistentToLocal(cb->getter);
-  Local<Value> val=constructorHandle->Call(Context::GetCurrent()->Global(), 1, argv);
+  Local<Value> val=fct->Call(Context::GetCurrent()->Global(), 1, argv);
 
   if (try_catch.HasCaught())
       FatalException(try_catch);
@@ -412,14 +416,16 @@ NAN_METHOD(Bar::AddVar) {
   if(!getter->IsUndefined()) {
     NanInitPersistent(Function,_getter,getter);
     NanAssignPersistent(Function, callbacks->getter, _getter);
+    // cout<<"[AddVarRW] adding getter "<<endl;
   }
   if(!setter->IsUndefined()) {
     NanInitPersistent(Function,_setter,setter);
     NanAssignPersistent(Function, callbacks->setter, _setter);
+    // cout<<"[AddVarRW] adding setter "<<endl;
   }
 
   String::AsciiValue def(args[3]);
-  //cout<<"[AddVarRW] name="<<*name<<" type: "<<type<<" def= "<<*def<<endl;
+  // cout<<"[AddVarRW] name="<<*name<<" type: "<<type<<" def= "<<*def<<endl;
 
   TwAddVarCB(bar->bar,*name,(TwType) type,
           setter->IsUndefined() ? NULL : atb::SetCallback,
