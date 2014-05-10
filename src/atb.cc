@@ -8,24 +8,23 @@ namespace atb {
 Persistent<FunctionTemplate> AntTweakBar::constructor_template;
 
 #define DEFINE_ATB_CONSTANT(constant) \
-    NODE_DEFINE_CONSTANT_VALUE(constructor_template->InstanceTemplate(), "TYPE_" #constant, TW_TYPE_##constant);
+    NODE_DEFINE_CONSTANT_VALUE(ctor, "TYPE_" #constant, TW_TYPE_##constant);
 
 void AntTweakBar::Initialize (Handle<Object> target) {
-  HandleScope scope;
+  NanScope();
 
-  Local<FunctionTemplate> t = FunctionTemplate::New(New);
-  constructor_template = Persistent<FunctionTemplate>::New(t);
+  Local<FunctionTemplate> ctor = FunctionTemplate::New(AntTweakBar::New);
+  NanAssignPersistent(FunctionTemplate, constructor_template, ctor);
+  ctor->InstanceTemplate()->SetInternalFieldCount(1);
+  ctor->SetClassName(NanSymbol("AntTweakBar"));
 
-  constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
-  constructor_template->SetClassName(JS_STR("AntTweakBar"));
-
-  NODE_SET_PROTOTYPE_METHOD(constructor_template, "Init", Init);
-  NODE_SET_PROTOTYPE_METHOD(constructor_template, "Terminate", Terminate);
-  NODE_SET_PROTOTYPE_METHOD(constructor_template, "WindowSize", WindowSize);
-  NODE_SET_PROTOTYPE_METHOD(constructor_template, "Draw", Draw);
-  NODE_SET_PROTOTYPE_METHOD(constructor_template, "NewBar", NewBar);
-  NODE_SET_PROTOTYPE_METHOD(constructor_template, "Define", Define);
-  NODE_SET_PROTOTYPE_METHOD(constructor_template, "DefineEnum", DefineEnum);
+  NODE_SET_PROTOTYPE_METHOD(ctor, "Init", Init);
+  NODE_SET_PROTOTYPE_METHOD(ctor, "Terminate", Terminate);
+  NODE_SET_PROTOTYPE_METHOD(ctor, "WindowSize", WindowSize);
+  NODE_SET_PROTOTYPE_METHOD(ctor, "Draw", Draw);
+  NODE_SET_PROTOTYPE_METHOD(ctor, "NewBar", NewBar);
+  NODE_SET_PROTOTYPE_METHOD(ctor, "Define", Define);
+  NODE_SET_PROTOTYPE_METHOD(ctor, "DefineEnum", DefineEnum);
 
 #define NODE_DEFINE_CONSTANT_VALUE(target, name, value)                   \
   (target)->Set(v8::String::NewSymbol(name),                         \
@@ -52,54 +51,50 @@ void AntTweakBar::Initialize (Handle<Object> target) {
 
   //DEFINE_ATB_CONSTANT(CDSTRING);
 
-  target->Set(String::NewSymbol("AntTweakBar"), constructor_template->GetFunction());
+  target->Set(NanSymbol("AntTweakBar"), ctor->GetFunction());
 }
 
-Handle<Value> AntTweakBar::New (const Arguments& args) {
+NAN_METHOD(AntTweakBar::New) {
   if (!args.IsConstructCall())
-    return ThrowTypeError("Constructor cannot be called as a function.");
+    return NanThrowTypeError("Constructor cannot be called as a function.");
 
-  HandleScope scope;
+  NanScope();
   AntTweakBar *cl = new AntTweakBar(args.This());
   cl->Wrap(args.This());
-  return scope.Close(args.This());
-}
-
-AntTweakBar::AntTweakBar(Handle<Object> wrapper)
-{
+  NanReturnValue(args.This());
 }
 
 AntTweakBar::~AntTweakBar () {
   TwTerminate();
 }
 
-JS_METHOD(AntTweakBar::Init) {
-  HandleScope scope;
+NAN_METHOD(AntTweakBar::Init) {
+  NanScope();
   TwInit(TW_OPENGL, NULL);
-  return scope.Close(Undefined());
+  NanReturnUndefined();
 }
 
-JS_METHOD(AntTweakBar::Terminate) {
-  HandleScope scope;
+NAN_METHOD(AntTweakBar::Terminate) {
+  NanScope();
   TwTerminate();
-  return scope.Close(Undefined());
+  NanReturnUndefined();
 }
 
-JS_METHOD(AntTweakBar::WindowSize) {
-  HandleScope scope;
+NAN_METHOD(AntTweakBar::WindowSize) {
+  NanScope();
   unsigned int w=args[0]->Uint32Value();
   unsigned int h=args[1]->Uint32Value();
   TwWindowSize(w,h);
-  return scope.Close(Undefined());
+  NanReturnUndefined();
 }
 
-JS_METHOD(AntTweakBar::Draw) {
-  HandleScope scope;
+NAN_METHOD(AntTweakBar::Draw) {
+  NanScope();
 
   // save state
   GLint program;//, ab, eab;
   glGetIntegerv(GL_CURRENT_PROGRAM, &program);
-  glUseProgram(NULL);
+  glUseProgram(0);
   
   // draw all AntTweakBars
   TwDraw();
@@ -107,23 +102,23 @@ JS_METHOD(AntTweakBar::Draw) {
   // restore state
   glUseProgram(program);
 
-  return scope.Close(Undefined());
+  NanReturnUndefined();
 }
 
-JS_METHOD(AntTweakBar::Define) {
-  HandleScope scope;
+NAN_METHOD(AntTweakBar::Define) {
+  NanScope();
 
   String::AsciiValue str(args[0]);
   TwDefine(*str);
 
-  return scope.Close(Undefined());
+  NanReturnUndefined();
 }
 
-JS_METHOD(AntTweakBar::DefineEnum) {
-  HandleScope scope;
+NAN_METHOD(AntTweakBar::DefineEnum) {
+  NanScope();
 
   String::AsciiValue str(args[0]);
-  Local<Array> arr=Array::Cast(*args[1]);
+  Local<Array> arr=Local<Array>::Cast(args[1]);
   int num=args[2]->IsUndefined() ? arr->Length() : args[2]->Uint32Value();
 
   TwEnumVal *vals=new TwEnumVal[num];
@@ -140,47 +135,46 @@ JS_METHOD(AntTweakBar::DefineEnum) {
     delete vals[i].Label;
   delete[] vals;
 
-  return scope.Close(JS_INT(type));
+  NanReturnValue(JS_INT(type));
 }
 
 
-JS_METHOD(AntTweakBar::NewBar) {
-  HandleScope scope;
+NAN_METHOD(AntTweakBar::NewBar) {
+  NanScope();
 
   String::AsciiValue str(args[0]);
   TwBar *bar = TwNewBar(args.Length()!=1 ? "AntTweakBar" : *str);
 
-  return scope.Close(atb::Bar::New(bar)->handle_);
+  NanReturnValue(NanObjectWrapHandle(atb::Bar::New(bar)));
 }
 
 Persistent<FunctionTemplate> Bar::constructor_template;
 
 void Bar::Initialize (Handle<Object> target) {
-  HandleScope scope;
+  NanScope();
 
-  Local<FunctionTemplate> t = FunctionTemplate::New(New);
-  constructor_template = Persistent<FunctionTemplate>::New(t);
+  Local<FunctionTemplate> ctor = FunctionTemplate::New(New);
+  NanAssignPersistent(FunctionTemplate, constructor_template, ctor);
+  ctor->InstanceTemplate()->SetInternalFieldCount(1);
+  ctor->SetClassName(NanSymbol("Bar"));
 
-  constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
-  constructor_template->SetClassName(JS_STR("Bar"));
+  NODE_SET_PROTOTYPE_METHOD(ctor, "AddVar", AddVar);
+  NODE_SET_PROTOTYPE_METHOD(ctor, "RemoveVar", RemoveVar);
+  NODE_SET_PROTOTYPE_METHOD(ctor, "RemoveAllVars", RemoveAllVars);
+  NODE_SET_PROTOTYPE_METHOD(ctor, "AddButton", AddButton);
+  NODE_SET_PROTOTYPE_METHOD(ctor, "AddSeparator", AddSeparator);
 
-  NODE_SET_PROTOTYPE_METHOD(constructor_template, "AddVar", AddVar);
-  NODE_SET_PROTOTYPE_METHOD(constructor_template, "RemoveVar", RemoveVar);
-  NODE_SET_PROTOTYPE_METHOD(constructor_template, "RemoveAllVars", RemoveAllVars);
-  NODE_SET_PROTOTYPE_METHOD(constructor_template, "AddButton", AddButton);
-  NODE_SET_PROTOTYPE_METHOD(constructor_template, "AddSeparator", AddSeparator);
-
-  target->Set(String::NewSymbol("Bar"), constructor_template->GetFunction());
+  target->Set(NanSymbol("Bar"), ctor->GetFunction());
 }
 
-Handle<Value> Bar::New (const Arguments& args) {
+NAN_METHOD(Bar::New) {
   if (!args.IsConstructCall())
-    return ThrowTypeError("Constructor cannot be called as a function.");
+    return NanThrowTypeError("Constructor cannot be called as a function.");
 
-  HandleScope scope;
+  NanScope();
   Bar *cl = new Bar(args.This());
   cl->Wrap(args.This());
-  return scope.Close(args.This());
+  NanReturnValue(args.This());
 }
 
 Bar::Bar(Handle<Object> wrapper) : bar(NULL)
@@ -199,10 +193,11 @@ Bar::~Bar () {
 Bar *Bar::New(TwBar *zbar)
 {
 
-  HandleScope scope;
+  NanScope();
 
   Local<Value> arg = Integer::NewFromUnsigned(0);
-  Local<Object> obj = constructor_template->GetFunction()->NewInstance(1, &arg);
+  Local<FunctionTemplate> constructorHandle = NanPersistentToLocal(constructor_template);
+  Local<Object> obj = constructorHandle->GetFunction()->NewInstance(1, &arg);
 
   Bar *v8bar = ObjectWrap::Unwrap<Bar>(obj);
   v8bar->bar = zbar;
@@ -213,7 +208,7 @@ Bar *Bar::New(TwBar *zbar)
 void TW_CALL SetCallback(const void *value, void *clientData) {
   //cout<<"in SetCallback"<<endl;
 
-  HandleScope scope;
+  NanScope();
   CB *cb=static_cast<CB*>(clientData);
   //cout<<"  cb type: "<<cb->type<<endl;
 
@@ -261,7 +256,8 @@ void TW_CALL SetCallback(const void *value, void *clientData) {
 
   TryCatch try_catch;
 
-  Local<Value> val=cb->setter->Call(Context::GetCurrent()->Global(), 1, argv);
+  Local<Function> constructorHandle = NanPersistentToLocal(cb->setter);
+  constructorHandle->Call(Context::GetCurrent()->Global(), 1, argv);
 
   if (try_catch.HasCaught())
     FatalException(try_catch);
@@ -271,7 +267,7 @@ void TW_CALL SetCallback(const void *value, void *clientData) {
 void TW_CALL GetCallback(void *value, void *clientData){
   //cout<<"in GetCallback"<<endl;
 
-  HandleScope scope;
+  NanScope();
   CB *cb=static_cast<CB*>(clientData);
 
   // build callback values
@@ -289,7 +285,8 @@ void TW_CALL GetCallback(void *value, void *clientData){
   cout<<"getter name: "<<*str<<" callable? "<<cb->getter->IsCallable()<<" function? "<<cb->getter->IsFunction()<<endl;
   cout<<"  global has getter()? "<<global->Has(name->ToString())<<endl;*/
 
-  Local<Value> val=cb->getter->Call(Context::GetCurrent()->Global(), 1, argv);
+  Local<Function> constructorHandle = NanPersistentToLocal(cb->getter);
+  Local<Value> val=constructorHandle->Call(Context::GetCurrent()->Global(), 1, argv);
 
   if (try_catch.HasCaught())
       FatalException(try_catch);
@@ -323,7 +320,7 @@ void TW_CALL GetCallback(void *value, void *clientData){
     *static_cast<uint32_t *>(value) = (uint32_t)val->Uint32Value();
     break;
   case TW_TYPE_COLOR3F: {
-    Local<Array> arr=Array::Cast(*val);
+    Local<Array> arr=Local<Array>::Cast(val);
     float *zvalue=static_cast<float *>(value);
     zvalue[0] = (float)arr->Get(0)->NumberValue();
     zvalue[1] = (float)arr->Get(1)->NumberValue();
@@ -331,7 +328,7 @@ void TW_CALL GetCallback(void *value, void *clientData){
     break;
   }
   case TW_TYPE_COLOR4F: {
-    Local<Array> arr=Array::Cast(*val);
+    Local<Array> arr=Local<Array>::Cast(val);
     float *zvalue=static_cast<float *>(value);
     zvalue[0] = (float)arr->Get(0)->NumberValue();
     zvalue[1] = (float)arr->Get(1)->NumberValue();
@@ -340,7 +337,7 @@ void TW_CALL GetCallback(void *value, void *clientData){
     break;
   }
   case TW_TYPE_DIR3F: {
-    Local<Array> arr=Array::Cast(*val);
+    Local<Array> arr=Local<Array>::Cast(val);
     float *zvalue=static_cast<float *>(value);
     zvalue[0] = (float)arr->Get(0)->NumberValue();
     zvalue[1] = (float)arr->Get(1)->NumberValue();
@@ -348,7 +345,7 @@ void TW_CALL GetCallback(void *value, void *clientData){
     break;
   }
   case TW_TYPE_DIR3D: {
-    Local<Array> arr=Array::Cast(*val);
+    Local<Array> arr=Local<Array>::Cast(val);
     double *zvalue=static_cast<double *>(value);
     zvalue[0] = (double)arr->Get(0)->NumberValue();
     zvalue[1] = (double)arr->Get(1)->NumberValue();
@@ -356,7 +353,7 @@ void TW_CALL GetCallback(void *value, void *clientData){
     break;
   }
   case TW_TYPE_QUAT4F: {
-    Local<Array> arr=Array::Cast(*val);
+    Local<Array> arr=Local<Array>::Cast(val);
     float *zvalue=static_cast<float *>(value);
     zvalue[0] = (float)arr->Get(0)->NumberValue();
     zvalue[1] = (float)arr->Get(1)->NumberValue();
@@ -365,7 +362,7 @@ void TW_CALL GetCallback(void *value, void *clientData){
     break;
   }
   case TW_TYPE_QUAT4D: {
-    Local<Array> arr=Array::Cast(*val);
+    Local<Array> arr=Local<Array>::Cast(val);
     double *zvalue=static_cast<double *>(value);
     zvalue[0] = (double)arr->Get(0)->NumberValue();
     zvalue[1] = (double)arr->Get(1)->NumberValue();
@@ -383,7 +380,7 @@ void TW_CALL GetCallback(void *value, void *clientData){
 void TW_CALL SetButtonCallback(void *clientData) {
   //cout<<"in SetButtonCallback"<<endl;
 
-  HandleScope scope;
+  NanScope();
   CB *cb=static_cast<CB*>(clientData);
   //cout<<"  cb type: "<<cb->type<<endl;
 
@@ -392,29 +389,34 @@ void TW_CALL SetButtonCallback(void *clientData) {
 
   TryCatch try_catch;
 
-  Local<Value> val=cb->setter->Call(Context::GetCurrent()->Global(), 1, argv);
+  Local<Function> constructorHandle = NanPersistentToLocal(cb->setter);
+  constructorHandle->Call(Context::GetCurrent()->Global(), 1, argv);
 
   if (try_catch.HasCaught())
     FatalException(try_catch);
 
 }
 
-JS_METHOD(Bar::AddVar) {
-  HandleScope scope;
-  Bar *bar = UnwrapThis<Bar>(args);
+NAN_METHOD(Bar::AddVar) {
+  NanScope();
+  Bar *bar = ObjectWrap::Unwrap<Bar>(args.This());
   String::AsciiValue name(args[0]);
   uint32_t type=args[1]->Uint32Value();
-  Local<Array> params=Array::Cast(*args[2]);
+  Local<Array> params=Local<Array>::Cast(args[2]);
   Local<Function> getter=Local<Function>::Cast(params->Get(JS_STR("getter")));
   Local<Function> setter=Local<Function>::Cast(params->Get(JS_STR("setter")));
   CB *callbacks=new CB();
   bar->cbs.push_back(callbacks);
   callbacks->name=strdup(*name);
   callbacks->type=type;
-  if(!getter->IsUndefined())
-    callbacks->getter=Persistent<Function>::New(getter);
-  if(!setter->IsUndefined())
-    callbacks->setter=Persistent<Function>::New(setter);
+  if(!getter->IsUndefined()) {
+    NanInitPersistent(Function,_getter,getter);
+    NanAssignPersistent(Function, callbacks->getter, _getter);
+  }
+  if(!setter->IsUndefined()) {
+    NanInitPersistent(Function,_setter,setter);
+    NanAssignPersistent(Function, callbacks->setter, _setter);
+  }
 
   String::AsciiValue def(args[3]);
   //cout<<"[AddVarRW] name="<<*name<<" type: "<<type<<" def= "<<*def<<endl;
@@ -424,36 +426,36 @@ JS_METHOD(Bar::AddVar) {
           getter->IsUndefined() ? NULL : atb::GetCallback,
           callbacks, *def);
 
-  return scope.Close(Undefined());
+  NanReturnUndefined();
 }
 
-JS_METHOD(Bar::AddSeparator) {
-  HandleScope scope;
-  Bar *bar = UnwrapThis<Bar>(args);
+NAN_METHOD(Bar::AddSeparator) {
+  NanScope();
+  Bar *bar = ObjectWrap::Unwrap<Bar>(args.This());
   String::AsciiValue name(args[0]);
   String::AsciiValue def(args[1]);
   TwAddSeparator(bar->bar,args[0]->IsUndefined() ? NULL : *name,args[1]->IsUndefined() ? NULL : *def);
-  return scope.Close(Undefined());
+  NanReturnUndefined();
 }
 
-JS_METHOD(Bar::RemoveVar) {
-  HandleScope scope;
-  Bar *bar = UnwrapThis<Bar>(args);
+NAN_METHOD(Bar::RemoveVar) {
+  NanScope();
+  Bar *bar = ObjectWrap::Unwrap<Bar>(args.This());
   String::AsciiValue name(args[0]);
   TwRemoveVar(bar->bar,*name);
-  return scope.Close(Undefined());
+  NanReturnUndefined();
 }
 
-JS_METHOD(Bar::RemoveAllVars) {
-  HandleScope scope;
-  Bar *bar = UnwrapThis<Bar>(args);
+NAN_METHOD(Bar::RemoveAllVars) {
+  NanScope();
+  Bar *bar = ObjectWrap::Unwrap<Bar>(args.This());
   TwRemoveAllVars(bar->bar);
-  return scope.Close(Undefined());
+  NanReturnUndefined();
 }
 
-JS_METHOD(Bar::AddButton) {
-  HandleScope scope;
-  Bar *bar = UnwrapThis<Bar>(args);
+NAN_METHOD(Bar::AddButton) {
+  NanScope();
+  Bar *bar = ObjectWrap::Unwrap<Bar>(args.This());
   String::AsciiValue name(args[0]);
   Local<Function> cb=Local<Function>::Cast(args[1]);
   String::AsciiValue def(args[2]);
@@ -463,14 +465,15 @@ JS_METHOD(Bar::AddButton) {
     callbacks=new CB();
     bar->cbs.push_back(callbacks);
     callbacks->name=strdup(*name);
-    callbacks->setter=Persistent<Function>::New(cb);
+    NanInitPersistent(Function,_setter,cb);
+    NanAssignPersistent(Function, callbacks->setter, _setter);
   }
 
   TwAddButton(bar->bar,*name,
               cb->IsUndefined() ? NULL : atb::SetButtonCallback,
               callbacks,
               *def);
-  return scope.Close(Undefined());
+  NanReturnUndefined();
 }
 
 } // namespace atb

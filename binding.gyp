@@ -14,12 +14,13 @@
       'defines': [
         'VERSION=0.1.2'
       ],
-      'sources': [ 'src/atb.cc', 'src/glfw.cc' ],
-      'include_dirs': [
-        './deps/include',
+      'sources': [ 
+        'src/atb.cc', 
+        'src/glfw.cc' 
       ],
-      'library_dirs': [
-        './deps/<(platform)',
+      'include_dirs': [
+        "<!(node -e \"require('nan')\")",
+        './deps/include',
       ],
       'conditions': [
         ['OS=="linux"', {'libraries': ['-lAntTweakBar', '-lglfw', '-lGLEW']}],

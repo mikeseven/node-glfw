@@ -43,7 +43,7 @@ glfw.events.on('resize',function(evt){
 });
 
 var glVersion = glfw.GetGLVersion(); // can only be called after window creation!
-log('gl ' + glVersion.major + '.' + glVersion.minor + '.' + glVersion.rev);
+log('OpenGL ' + glVersion.major + '.' + glVersion.minor + '.' + glVersion.rev);
 
 // Enable sticky keys
 glfw.Enable(glfw.STICKY_KEYS);
@@ -66,6 +66,8 @@ do {
   // Get window size (may be different than the requested size)
   var wsize = glfw.GetWindowSize();
   //log("window size: "+wsize.width+', '+wsize.height);
+
+  glfw.testScene(wsize.width, wsize.height);
 
   // Swap buffers
   glfw.SwapBuffers();
