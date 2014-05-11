@@ -36,7 +36,6 @@ public:
 
 protected:
   static NAN_METHOD(New);
-
   static NAN_METHOD(AddVar);
   static NAN_METHOD(AddSeparator);
   static NAN_METHOD(AddButton);

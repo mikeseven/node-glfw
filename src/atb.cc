@@ -8,15 +8,15 @@ namespace atb {
 Persistent<FunctionTemplate> AntTweakBar::constructor_template;
 
 #define DEFINE_ATB_CONSTANT(constant) \
-    NODE_DEFINE_CONSTANT_VALUE(ctor, "TYPE_" #constant, TW_TYPE_##constant);
+    NODE_DEFINE_CONSTANT_VALUE(ctor->InstanceTemplate(), "TYPE_" #constant, TW_TYPE_##constant);
 
 void AntTweakBar::Initialize (Handle<Object> target) {
   NanScope();
 
-  Local<FunctionTemplate> ctor = FunctionTemplate::New(New);
+  Local<FunctionTemplate> ctor = FunctionTemplate::New(AntTweakBar::New);
   NanAssignPersistent(FunctionTemplate, constructor_template, ctor);
   ctor->InstanceTemplate()->SetInternalFieldCount(1);
-  ctor->SetClassName(JS_STR("AntTweakBar"));
+  ctor->SetClassName(NanSymbol("AntTweakBar"));
 
   NODE_SET_PROTOTYPE_METHOD(ctor, "Init", Init);
   NODE_SET_PROTOTYPE_METHOD(ctor, "Terminate", Terminate);
@@ -75,13 +75,13 @@ AntTweakBar::~AntTweakBar () {
 NAN_METHOD(AntTweakBar::Init) {
   NanScope();
   TwInit(TW_OPENGL, NULL);
-  NanReturnValue(Undefined());
+  NanReturnUndefined();
 }
 
 NAN_METHOD(AntTweakBar::Terminate) {
   NanScope();
   TwTerminate();
-  NanReturnValue(Undefined());
+  NanReturnUndefined();
 }
 
 NAN_METHOD(AntTweakBar::WindowSize) {
@@ -89,7 +89,7 @@ NAN_METHOD(AntTweakBar::WindowSize) {
   unsigned int w=args[0]->Uint32Value();
   unsigned int h=args[1]->Uint32Value();
   TwWindowSize(w,h);
-  NanReturnValue(Undefined());
+  NanReturnUndefined();
 }
 
 NAN_METHOD(AntTweakBar::Draw) {
@@ -106,7 +106,7 @@ NAN_METHOD(AntTweakBar::Draw) {
   // restore state
   glUseProgram(program);
 
-  NanReturnValue(Undefined());
+  NanReturnUndefined();
 }
 
 NAN_METHOD(AntTweakBar::Define) {
@@ -115,14 +115,14 @@ NAN_METHOD(AntTweakBar::Define) {
   String::AsciiValue str(args[0]);
   TwDefine(*str);
 
-  NanReturnValue(Undefined());
+  NanReturnUndefined();
 }
 
 NAN_METHOD(AntTweakBar::DefineEnum) {
   NanScope();
 
   String::AsciiValue str(args[0]);
-  Array* arr=Array::Cast(*args[1]);
+  Local<Array> arr=Local<Array>::Cast(args[1]);
   int num=args[2]->IsUndefined() ? arr->Length() : args[2]->Uint32Value();
 
   TwEnumVal *vals=new TwEnumVal[num];
@@ -157,10 +157,10 @@ Persistent<FunctionTemplate> Bar::constructor_template;
 void Bar::Initialize (Handle<Object> target) {
   NanScope();
 
-  Local<FunctionTemplate> ctor = FunctionTemplate::New(New);
+  Local<FunctionTemplate> ctor = FunctionTemplate::New(Bar::New);
   NanAssignPersistent(FunctionTemplate, constructor_template, ctor);
   ctor->InstanceTemplate()->SetInternalFieldCount(1);
-  ctor->SetClassName(JS_STR("Bar"));
+  ctor->SetClassName(NanSymbol("Bar"));
 
   NODE_SET_PROTOTYPE_METHOD(ctor, "AddVar", AddVar);
   NODE_SET_PROTOTYPE_METHOD(ctor, "RemoveVar", RemoveVar);
@@ -200,10 +200,9 @@ Bar *Bar::New(TwBar *zbar)
   NanScope();
 
   Local<Value> arg = Integer::NewFromUnsigned(0);
-  // Local<Object> obj = constructor_template->GetFunction()->NewInstance(1, &arg);
   Local<FunctionTemplate> constructorHandle = NanPersistentToLocal(constructor_template);
   Local<Object> obj = constructorHandle->GetFunction()->NewInstance(1, &arg);
-  
+
   Bar *v8bar = ObjectWrap::Unwrap<Bar>(obj);
   v8bar->bar = zbar;
 
@@ -211,11 +210,11 @@ Bar *Bar::New(TwBar *zbar)
 }
 
 void TW_CALL SetCallback(const void *value, void *clientData) {
-  //cout<<"in SetCallback"<<endl;
+  // cout<<"in SetCallback"<<endl;
 
   NanScope();
   CB *cb=static_cast<CB*>(clientData);
-  //cout<<"  cb type: "<<cb->type<<endl;
+  // cout<<"  cb type: "<<cb->type<<endl;
 
   Handle<Value> argv[1];
 
@@ -261,7 +260,6 @@ void TW_CALL SetCallback(const void *value, void *clientData) {
 
   TryCatch try_catch;
 
-  // cb->setter->Call(Context::GetCurrent()->Global(), 1, argv);
   Local<Function> constructorHandle = NanPersistentToLocal(cb->setter);
   constructorHandle->Call(Context::GetCurrent()->Global(), 1, argv);
 
@@ -270,8 +268,8 @@ void TW_CALL SetCallback(const void *value, void *clientData) {
 
 }
 
-void TW_CALL GetCallback(void *value, void *clientData){
-  //cout<<"in GetCallback"<<endl;
+void TW_CALL GetCallback(void *value, void *clientData) {
+  // cout<<"in GetCallback"<<endl;
 
   NanScope();
   CB *cb=static_cast<CB*>(clientData);
@@ -282,18 +280,17 @@ void TW_CALL GetCallback(void *value, void *clientData){
 
   TryCatch try_catch;
 
-  /*cout<<"  calling JS getter"<<endl;
-  Local<Context> ctx=Context::GetCurrent();
-  Local<Object> global=ctx->Global();
-  cout<<"global context: "<<*ctx<<" global object: "<<*global<<endl;
-  Handle<Value> name=cb->getter->GetName();
-  String::AsciiValue str(name);
-  cout<<"getter name: "<<*str<<" callable? "<<cb->getter->IsCallable()<<" function? "<<cb->getter->IsFunction()<<endl;
-  cout<<"  global has getter()? "<<global->Has(name->ToString())<<endl;*/
+  // cout<<"  calling JS getter"<<endl;
+  // Local<Context> ctx=Context::GetCurrent();
+  // Local<Object> global=ctx->Global();
+  // cout<<"global context: "<<*ctx<<" global object: "<<*global<<endl;
+  Local<Function> fct=NanPersistentToLocal(cb->getter);
+  // Handle<Value> name=fct->GetName();
+  // String::AsciiValue str(name);
+  // cout<<"getter name: "<<*str<<" callable? "<<fct->IsCallable()<<" function? "<<fct->IsFunction()<<endl;
+  // cout<<"  global has getter()? "<<global->Has(name->ToString())<<endl;
 
-  // Local<Value> val=cb->getter->Call(Context::GetCurrent()->Global(), 1, argv);
-  Local<Function> constructorHandle = NanPersistentToLocal(cb->getter);
-  Local<Value> val=constructorHandle->Call(Context::GetCurrent()->Global(), 1, argv);
+  Local<Value> val=fct->Call(Context::GetCurrent()->Global(), 1, argv);
 
   if (try_catch.HasCaught())
       FatalException(try_catch);
@@ -327,7 +324,7 @@ void TW_CALL GetCallback(void *value, void *clientData){
     *static_cast<uint32_t *>(value) = (uint32_t)val->Uint32Value();
     break;
   case TW_TYPE_COLOR3F: {
-    Array* arr=Array::Cast(*val);
+    Local<Array> arr=Local<Array>::Cast(val);
     float *zvalue=static_cast<float *>(value);
     zvalue[0] = (float)arr->Get(0)->NumberValue();
     zvalue[1] = (float)arr->Get(1)->NumberValue();
@@ -335,7 +332,7 @@ void TW_CALL GetCallback(void *value, void *clientData){
     break;
   }
   case TW_TYPE_COLOR4F: {
-    Array* arr=Array::Cast(*val);
+    Local<Array> arr=Local<Array>::Cast(val);
     float *zvalue=static_cast<float *>(value);
     zvalue[0] = (float)arr->Get(0)->NumberValue();
     zvalue[1] = (float)arr->Get(1)->NumberValue();
@@ -344,7 +341,7 @@ void TW_CALL GetCallback(void *value, void *clientData){
     break;
   }
   case TW_TYPE_DIR3F: {
-    Array* arr=Array::Cast(*val);
+    Local<Array> arr=Local<Array>::Cast(val);
     float *zvalue=static_cast<float *>(value);
     zvalue[0] = (float)arr->Get(0)->NumberValue();
     zvalue[1] = (float)arr->Get(1)->NumberValue();
@@ -352,7 +349,7 @@ void TW_CALL GetCallback(void *value, void *clientData){
     break;
   }
   case TW_TYPE_DIR3D: {
-    Array* arr=Array::Cast(*val);
+    Local<Array> arr=Local<Array>::Cast(val);
     double *zvalue=static_cast<double *>(value);
     zvalue[0] = (double)arr->Get(0)->NumberValue();
     zvalue[1] = (double)arr->Get(1)->NumberValue();
@@ -360,7 +357,7 @@ void TW_CALL GetCallback(void *value, void *clientData){
     break;
   }
   case TW_TYPE_QUAT4F: {
-    Array* arr=Array::Cast(*val);
+    Local<Array> arr=Local<Array>::Cast(val);
     float *zvalue=static_cast<float *>(value);
     zvalue[0] = (float)arr->Get(0)->NumberValue();
     zvalue[1] = (float)arr->Get(1)->NumberValue();
@@ -369,7 +366,7 @@ void TW_CALL GetCallback(void *value, void *clientData){
     break;
   }
   case TW_TYPE_QUAT4D: {
-    Array* arr=Array::Cast(*val);
+    Local<Array> arr=Local<Array>::Cast(val);
     double *zvalue=static_cast<double *>(value);
     zvalue[0] = (double)arr->Get(0)->NumberValue();
     zvalue[1] = (double)arr->Get(1)->NumberValue();
@@ -396,7 +393,6 @@ void TW_CALL SetButtonCallback(void *clientData) {
 
   TryCatch try_catch;
 
-  // cb->setter->Call(Context::GetCurrent()->Global(), 1, argv);
   Local<Function> constructorHandle = NanPersistentToLocal(cb->setter);
   constructorHandle->Call(Context::GetCurrent()->Global(), 1, argv);
 
@@ -407,10 +403,10 @@ void TW_CALL SetButtonCallback(void *clientData) {
 
 NAN_METHOD(Bar::AddVar) {
   NanScope();
-  Bar *bar = node::ObjectWrap::Unwrap<Bar>(args.This());
+  Bar *bar = ObjectWrap::Unwrap<Bar>(args.This());
   String::AsciiValue name(args[0]);
   uint32_t type=args[1]->Uint32Value();
-  Array* params=Array::Cast(*args[2]);
+  Local<Array> params=Local<Array>::Cast(args[2]);
   Local<Function> getter=Local<Function>::Cast(params->Get(JS_STR("getter")));
   Local<Function> setter=Local<Function>::Cast(params->Get(JS_STR("setter")));
   CB *callbacks=new CB();
@@ -418,54 +414,54 @@ NAN_METHOD(Bar::AddVar) {
   callbacks->name=strdup(*name);
   callbacks->type=type;
   if(!getter->IsUndefined()) {
-    // callbacks->getter=Persistent<Function>::New(getter);
     NanInitPersistent(Function,_getter,getter);
     NanAssignPersistent(Function, callbacks->getter, _getter);
+    // cout<<"[AddVarRW] adding getter "<<endl;
   }
   if(!setter->IsUndefined()) {
-    // callbacks->setter=Persistent<Function>::New(setter);
     NanInitPersistent(Function,_setter,setter);
     NanAssignPersistent(Function, callbacks->setter, _setter);
+    // cout<<"[AddVarRW] adding setter "<<endl;
   }
 
   String::AsciiValue def(args[3]);
-  //cout<<"[AddVarRW] name="<<*name<<" type: "<<type<<" def= "<<*def<<endl;
+  // cout<<"[AddVarRW] name="<<*name<<" type: "<<type<<" def= "<<*def<<endl;
 
   TwAddVarCB(bar->bar,*name,(TwType) type,
           setter->IsUndefined() ? NULL : atb::SetCallback,
           getter->IsUndefined() ? NULL : atb::GetCallback,
           callbacks, *def);
 
-  NanReturnValue(Undefined());
+  NanReturnUndefined();
 }
 
 NAN_METHOD(Bar::AddSeparator) {
   NanScope();
-  Bar *bar = node::ObjectWrap::Unwrap<Bar>(args.This());
+  Bar *bar = ObjectWrap::Unwrap<Bar>(args.This());
   String::AsciiValue name(args[0]);
   String::AsciiValue def(args[1]);
   TwAddSeparator(bar->bar,args[0]->IsUndefined() ? NULL : *name,args[1]->IsUndefined() ? NULL : *def);
-  NanReturnValue(Undefined());
+  NanReturnUndefined();
 }
 
 NAN_METHOD(Bar::RemoveVar) {
   NanScope();
-  Bar *bar = node::ObjectWrap::Unwrap<Bar>(args.This());
+  Bar *bar = ObjectWrap::Unwrap<Bar>(args.This());
   String::AsciiValue name(args[0]);
   TwRemoveVar(bar->bar,*name);
-  NanReturnValue(Undefined());
+  NanReturnUndefined();
 }
 
 NAN_METHOD(Bar::RemoveAllVars) {
   NanScope();
-  Bar *bar = node::ObjectWrap::Unwrap<Bar>(args.This());
+  Bar *bar = ObjectWrap::Unwrap<Bar>(args.This());
   TwRemoveAllVars(bar->bar);
-  NanReturnValue(Undefined());
+  NanReturnUndefined();
 }
 
 NAN_METHOD(Bar::AddButton) {
   NanScope();
-  Bar *bar = node::ObjectWrap::Unwrap<Bar>(args.This());
+  Bar *bar = ObjectWrap::Unwrap<Bar>(args.This());
   String::AsciiValue name(args[0]);
   Local<Function> cb=Local<Function>::Cast(args[1]);
   String::AsciiValue def(args[2]);
@@ -475,7 +471,6 @@ NAN_METHOD(Bar::AddButton) {
     callbacks=new CB();
     bar->cbs.push_back(callbacks);
     callbacks->name=strdup(*name);
-    //callbacks->setter=Persistent<Function>::New(cb);
     NanInitPersistent(Function,_setter,cb);
     NanAssignPersistent(Function, callbacks->setter, _setter);
   }
@@ -484,7 +479,7 @@ NAN_METHOD(Bar::AddButton) {
               cb->IsUndefined() ? NULL : atb::SetButtonCallback,
               callbacks,
               *def);
-  NanReturnValue(Undefined());
+  NanReturnUndefined();
 }
 
 } // namespace atb

@@ -24,7 +24,7 @@ Object.defineProperty(GLFW, 'events', {
       //_emit.apply(this,args);
       events.listeners(args[0]).forEach(function(listener) {
         listener(args[1]);        
-      })
+      });
     };
     return events;
   },
