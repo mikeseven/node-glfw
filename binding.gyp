@@ -9,10 +9,9 @@
   ],
   'targets': [
     {
-      #'target_name': 'glfw-<(platform)-<(target_arch)',
       'target_name': 'glfw',
       'defines': [
-        'VERSION=0.1.2'
+        'VERSION=0.2.0'
       ],
       'sources': [ 
         'src/atb.cc', 
