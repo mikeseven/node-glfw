@@ -22,7 +22,7 @@
         './deps/include',
       ],
       'conditions': [
-        ['OS=="linux"', {'libraries': ['-lAntTweakBar', '<!@(pkg-config --libs libglfw2 libglew-dev)']}],
+        ['OS=="linux"', {'libraries': ['-lAntTweakBar', '<!@(pkg-config --libs libglfw glew)']}],
         ['OS=="mac"', {'libraries': ['-lAntTweakBar', '-lglfw', '-lGLEW', '-framework OpenGL']}],
         ['OS=="win"', {
           'libraries': [
