@@ -15,9 +15,13 @@ if (!glfw.Init()) {
 glfw.OpenWindowHint(glfw.OPENGL_MAJOR_VERSION, 3);
 glfw.OpenWindowHint(glfw.OPENGL_MINOR_VERSION, 2);
 
-if (!glfw.OpenWindow(640, 480, 0, 0, 0, 0, // r,g,b,a bits
-0, 0, // depth, stencil bits
-glfw.WINDOW)) {
+if (!glfw.OpenWindow(
+  640, 480, // width, height
+  0, 0, 0, 0, // r,g,b,a bits
+  0, 0, // depth, stencil bits
+  glfw.WINDOW // glfw.WINDOW
+)) 
+{
   log("Failed to open GLFW window");
   glfw.Terminate();
   process.exit(-1);
@@ -26,15 +30,15 @@ glfw.WINDOW)) {
 glfw.SetWindowTitle("Trilinear interpolation");
 
 // testing events
-glfw.events.on('keydown',function(evt){
+glfw.events.on('keydown',function(evt) {
   log("[keydown] "+util.inspect(evt));
 });
 
-glfw.events.on('mousemove',function(evt){
+glfw.events.on('mousemove',function(evt) {
   log("[mousemove] "+evt.x+", "+evt.y);
 });
 
-glfw.events.on('mousewheel',function(evt){
+glfw.events.on('mousewheel',function(evt) {
   log("[mousewheel] "+evt.position);
 });
 

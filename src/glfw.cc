@@ -308,10 +308,23 @@ NAN_METHOD(OpenWindow) {
   int mode        = args[8]->Uint32Value();
 
   if(!windowCreated) {
-    /*GLFWvidmode vmode;   // GLFW video mode
-    glfwGetDesktopMode(&vmode);
-    windowCreated=glfwOpenWindow(width,height, vmode.RedBits, vmode.GreenBits, vmode.BlueBits,
-        alphabits,depthbits,stencilbits, mode);*/
+    // GLFWvidmode desktop;   // GLFW video mode
+    // glfwGetDesktopMode(&desktop);
+    // windowCreated=glfwOpenWindow(width,height, desktop.RedBits, desktop.GreenBits, desktop.BlueBits,
+    //     alphabits,depthbits,stencilbits, mode);
+
+    // open the window at the current Desktop resolution and colour depth
+    // windowCreated=glfwOpenWindow(
+    //     desktop.Width,
+    //     desktop.Height,
+    //     desktop.RedBits,
+    //     desktop.GreenBits,
+    //     desktop.BlueBits,
+    //     8,          // alpha bits
+    //     32,         // depth bits
+    //     0,          // stencil bits
+    //     GLFW_FULLSCREEN
+    // );
     windowCreated=glfwOpenWindow(width,height,redbits,greenbits,bluebits,alphabits,depthbits,stencilbits,mode)!=0;
 
     GLenum err = glewInit();
