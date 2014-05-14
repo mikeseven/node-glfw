@@ -1,6 +1,7 @@
 {
   'variables': {
     'platform': '<(OS)',
+    'glfw_version': 'GLFW3'
   },
   'conditions': [
     # Replace gyp platform with node platform, blech
@@ -11,19 +12,23 @@
     {
       'target_name': 'glfw',
       'defines': [
-        'VERSION=0.2.0'
+        'VERSION=0.2.0',
+        '<(glfw_version)'
       ],
       'sources': [ 
         'src/atb.cc', 
-        'src/glfw.cc' 
       ],
       'include_dirs': [
         "<!(node -e \"require('nan')\")",
         './deps/include',
       ],
       'conditions': [
-        ['OS=="linux"', {'libraries': ['-lAntTweakBar', '<!@(pkg-config --libs libglfw glew)']}],
-        ['OS=="mac"', {'libraries': ['-lAntTweakBar', '-lglfw', '-lGLEW', '-framework OpenGL']}],
+        ['glfw_version=="GLFW2"', {'sources' : ['src/glfw.cc']}],
+        ['glfw_version=="GLFW3"', {'sources' : ['src/glfw3.cc']}],
+        ['OS=="linux"', {'libraries': ['-lAntTweakBar', '<!@(pkg-config --libs glfw3 glew)']}],
+        ['OS=="mac"', {
+          'libraries': ['-lAntTweakBar', '<(module_root_dir)/libglfw3.a', '-lGLEW', '-framework OpenGL'],
+        }],
         ['OS=="win"', {
           'libraries': [
             'AntTweakBar64.lib',

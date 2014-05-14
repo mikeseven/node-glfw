@@ -1,8 +1,5 @@
 var GLFW = module.exports = require('./build/Release/glfw.node');
 
-// make sure cursor is always visible
-GLFW.Enable(GLFW.MOUSE_CURSOR);
-
 // Easy event emitter based event loop.  Started automatically when the first
 // listener is added.
 var events;
