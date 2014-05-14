@@ -322,23 +322,25 @@ void APIENTRY keyCB(GLFWwindow *window, int key, int scancode, int action, int m
     evt->Set(JS_STR("altKey"),JS_BOOL(mods & GLFW_MOD_ALT));
     evt->Set(JS_STR("metaKey"),JS_BOOL(mods & GLFW_MOD_SUPER));
 
+    int which=key, charCode=key;
+
     if(key>=GLFW_KEY_ESCAPE && key<=GLFW_KEY_LAST)
       key=jsKeyCode[key-GLFW_KEY_ESCAPE];
-    else if(key==GLFW_KEY_SEMICOLON)  key=186;  // ;
-    else if(key==GLFW_KEY_EQUAL)  key=187;  // =
-    else if(key==GLFW_KEY_COMMA)  key=188;  // ,
-    else if(key==GLFW_KEY_MINUS)  key=189;  // -
-    else if(key==GLFW_KEY_PERIOD)  key=190;  // .
-    else if(key==GLFW_KEY_SLASH)  key=191;  // /
-    else if(key==GLFW_KEY_GRAVE_ACCENT)  key=192;  // `
-    else if(key==GLFW_KEY_LEFT_BRACKET)  key=219;  // [
-    else if(key==GLFW_KEY_BACKSLASH)  key=220;  // backslash
-    else if(key==GLFW_KEY_RIGHT_BRACKET)  key=221;  // ]
-    else if(key==GLFW_KEY_APOSTROPHE)  key=222;  // '
+    else if(key==GLFW_KEY_SEMICOLON)  key=186;    // ;
+    else if(key==GLFW_KEY_EQUAL)  key=187;        // =
+    else if(key==GLFW_KEY_COMMA)  key=188;        // ,
+    else if(key==GLFW_KEY_MINUS)  key=189;        // -
+    else if(key==GLFW_KEY_PERIOD)  key=190;       // .
+    else if(key==GLFW_KEY_SLASH)  key=191;        // /
+    else if(key==GLFW_KEY_GRAVE_ACCENT)  key=192; // `
+    else if(key==GLFW_KEY_LEFT_BRACKET)  key=219; // [
+    else if(key==GLFW_KEY_BACKSLASH)  key=220;    /* \ */
+    else if(key==GLFW_KEY_RIGHT_BRACKET)  key=221;// ]
+    else if(key==GLFW_KEY_APOSTROPHE)  key=222;   // '
 
-    evt->Set(JS_STR("which"),JS_INT(key));
+    evt->Set(JS_STR("which"),JS_INT(which));
     evt->Set(JS_STR("keyCode"),JS_INT(key));
-    evt->Set(JS_STR("charCode"),JS_INT(key));
+    evt->Set(JS_STR("charCode"),JS_INT(charCode));
 
     Handle<Value> argv[2] = {
       JS_STR(&actionNames[action << 3]), // event name
