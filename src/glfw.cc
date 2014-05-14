@@ -322,7 +322,7 @@ void APIENTRY keyCB(GLFWwindow *window, int key, int scancode, int action, int m
     evt->Set(JS_STR("altKey"),JS_BOOL(mods & GLFW_MOD_ALT));
     evt->Set(JS_STR("metaKey"),JS_BOOL(mods & GLFW_MOD_SUPER));
 
-    int charCode=key;
+    int which=key, charCode=key;
 
     if(key>=GLFW_KEY_ESCAPE && key<=GLFW_KEY_LAST)
       key=jsKeyCode[key-GLFW_KEY_ESCAPE];
@@ -338,7 +338,7 @@ void APIENTRY keyCB(GLFWwindow *window, int key, int scancode, int action, int m
     else if(key==GLFW_KEY_RIGHT_BRACKET)  key=221;// ]
     else if(key==GLFW_KEY_APOSTROPHE)  key=222;   // '
 
-    evt->Set(JS_STR("which"),JS_INT(key));
+    evt->Set(JS_STR("which"),JS_INT(which));
     evt->Set(JS_STR("keyCode"),JS_INT(key));
     evt->Set(JS_STR("charCode"),JS_INT(charCode));
 
