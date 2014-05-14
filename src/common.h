@@ -12,14 +12,8 @@
 
 #define GLFW_NO_GLU
 #define GLFW_DLL
-#ifdef GLFW2
- #include <GL/glfw.h>
-#elif defined(GLFW3)
- #include <GLFW/glfw3.h>
-#else
- #error "Unsupported GLFW version"
-#endif
- 
+#include <GLFW/glfw3.h>
+
 // NodeJS includes
 #include <node.h>
 #include "nan.h"
