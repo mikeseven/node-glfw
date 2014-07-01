@@ -591,7 +591,7 @@ NAN_METHOD(GetJoystickName) {
   NanReturnValue(JS_STR(response));
 }
 
-NAN_METHOD(CreateWindow) {
+NAN_METHOD(glfw_CreateWindow) {
   NanScope();
   int width       = args[0]->Uint32Value();
   int height      = args[1]->Uint32Value();
@@ -957,7 +957,8 @@ void init(Handle<Object> target) {
   JS_GLFW_SET_METHOD(GetMonitors);
 
   /* Window handling */
-  JS_GLFW_SET_METHOD(CreateWindow);
+  //JS_GLFW_SET_METHOD(CreateWindow);
+  NODE_SET_METHOD(target, "CreateWindow", glfw::glfw_CreateWindow);
   JS_GLFW_SET_METHOD(WindowHint);
   JS_GLFW_SET_METHOD(DefaultWindowHints);
   JS_GLFW_SET_METHOD(DestroyWindow);
