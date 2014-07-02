@@ -11,7 +11,7 @@
     {
       'target_name': 'glfw',
       'defines': [
-        'VERSION=0.3.0',
+        'VERSION=0.3.1',
       ],
       'sources': [ 
         'src/atb.cc', 'src/glfw.cc'
