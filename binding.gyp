@@ -11,7 +11,7 @@
     {
       'target_name': 'glfw',
       'defines': [
-        'VERSION=0.2.0',
+        'VERSION=0.3.0',
       ],
       'sources': [ 
         'src/atb.cc', 'src/glfw.cc'
@@ -29,7 +29,7 @@
           'libraries': [
             'AntTweakBar64.lib',
             'glew64s.lib', 
-            'glfw64dll.lib', 
+            'glfw3dll.lib', 
             'opengl32.lib'
             ],
           'defines' : [
