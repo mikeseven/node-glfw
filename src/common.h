@@ -12,7 +12,7 @@
 
 #define GLFW_NO_GLU
 #define GLFW_DLL
-#include <GL/glfw.h>
+#include <GLFW/glfw3.h>
 
 // NodeJS includes
 #include <node.h>
