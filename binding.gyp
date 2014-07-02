@@ -29,7 +29,7 @@
           'libraries': [
             'AntTweakBar64.lib',
             'glew64s.lib', 
-            'glfw64dll.lib', 
+            'glfw3dll.lib', 
             'opengl32.lib'
             ],
           'defines' : [
