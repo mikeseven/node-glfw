@@ -619,6 +619,9 @@ NAN_METHOD(CreateWindow) {
 
     glfwMakeContextCurrent(window);
 
+    // make sure cursor is always shown
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+
     GLenum err = glewInit();
     if (err)
     {
