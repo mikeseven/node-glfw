@@ -1,0 +1,3 @@
+[submodule "deps"]
+	path = deps
+	url = https://github.com/mikeseven/node-native-graphics-deps.git

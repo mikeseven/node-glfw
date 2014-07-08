@@ -7,7 +7,9 @@
 #define COMMON_H_
 
 // OpenGL Graphics Includes
+#ifndef _WIN32
 #define GLEW_STATIC
+#endif
 #include <GL/glew.h>
 
 #define GLFW_NO_GLU
