@@ -1,4 +1,4 @@
-var GLFW = module.exports = require('./build/Release/glfw.node');
+var GLFW = module.exports = require('bindings')('glfw');
 
 // Easy event emitter based event loop.  Started automatically when the first
 // listener is added.
