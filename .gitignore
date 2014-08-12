@@ -7,3 +7,4 @@ build
 .DS_Store
 Debug
 node-glfw.iml
+node_modules
