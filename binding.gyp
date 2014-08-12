@@ -23,7 +23,7 @@
       'conditions': [
         ['OS=="linux"', {'libraries': ['-lAntTweakBar', '<!@(pkg-config --libs glfw3 glew)']}],
         ['OS=="mac"', {
-          'libraries': ['-lAntTweakBar', '-lGLEW', '-framework OpenGL'],
+          'libraries': ['-lAntTweakBar', '-lglfw3', '-lGLEW', '-framework OpenGL'],
         }],
         ['OS=="win"', {
           'libraries': [
