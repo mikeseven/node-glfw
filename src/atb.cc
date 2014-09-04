@@ -5,7 +5,7 @@
 using namespace std;
 
 namespace atb {
-Persistent<FunctionTemplate> AntTweakBar::constructor_template;
+Persistent<Function> AntTweakBar::constructor_template;
 
 #define DEFINE_ATB_CONSTANT(constant) \
     NODE_DEFINE_CONSTANT_VALUE(ctor->InstanceTemplate(), "TYPE_" #constant, TW_TYPE_##constant);
@@ -14,9 +14,8 @@ void AntTweakBar::Initialize (Handle<Object> target) {
   NanScope();
 
   Local<FunctionTemplate> ctor = FunctionTemplate::New(AntTweakBar::New);
-  NanAssignPersistent(FunctionTemplate, constructor_template, ctor);
   ctor->InstanceTemplate()->SetInternalFieldCount(1);
-  ctor->SetClassName(NanSymbol("AntTweakBar"));
+  ctor->SetClassName(JS_STR("AntTweakBar"));
 
   NODE_SET_PROTOTYPE_METHOD(ctor, "Init", Init);
   NODE_SET_PROTOTYPE_METHOD(ctor, "Terminate", Terminate);
@@ -27,8 +26,8 @@ void AntTweakBar::Initialize (Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(ctor, "DefineEnum", DefineEnum);
 
 #define NODE_DEFINE_CONSTANT_VALUE(target, name, value)                   \
-  (target)->Set(NanSymbol(name),                         \
-                v8::Integer::New(value),                               \
+  (target)->Set(JS_STR(name),                         \
+                NanNew<v8::Integer>(value),                               \
                 static_cast<v8::PropertyAttribute>(v8::ReadOnly|v8::DontDelete))
 
   DEFINE_ATB_CONSTANT(CHAR);
@@ -51,7 +50,8 @@ void AntTweakBar::Initialize (Handle<Object> target) {
 
   //DEFINE_ATB_CONSTANT(CDSTRING);
 
-  target->Set(NanSymbol("AntTweakBar"), ctor->GetFunction());
+  NanAssignPersistent<Function>(constructor_template, ctor->GetFunction());
+   target->Set(JS_STR("AntTweakBar"), ctor->GetFunction());
 }
 
 NAN_METHOD(AntTweakBar::New) {
@@ -99,7 +99,7 @@ NAN_METHOD(AntTweakBar::Draw) {
   GLint program;//, ab, eab;
   glGetIntegerv(GL_CURRENT_PROGRAM, &program);
   glUseProgram(0);
-  
+
   // draw all AntTweakBars
   TwDraw();
 
@@ -152,15 +152,14 @@ NAN_METHOD(AntTweakBar::NewBar) {
   NanReturnValue(NanObjectWrapHandle(atb::Bar::New(bar)));
 }
 
-Persistent<FunctionTemplate> Bar::constructor_template;
+Persistent<Function> Bar::constructor_template;
 
 void Bar::Initialize (Handle<Object> target) {
   NanScope();
 
   Local<FunctionTemplate> ctor = FunctionTemplate::New(Bar::New);
-  NanAssignPersistent(FunctionTemplate, constructor_template, ctor);
   ctor->InstanceTemplate()->SetInternalFieldCount(1);
-  ctor->SetClassName(NanSymbol("Bar"));
+  ctor->SetClassName(JS_STR("Bar"));
 
   NODE_SET_PROTOTYPE_METHOD(ctor, "AddVar", AddVar);
   NODE_SET_PROTOTYPE_METHOD(ctor, "RemoveVar", RemoveVar);
@@ -168,7 +167,8 @@ void Bar::Initialize (Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(ctor, "AddButton", AddButton);
   NODE_SET_PROTOTYPE_METHOD(ctor, "AddSeparator", AddSeparator);
 
-  target->Set(NanSymbol("Bar"), ctor->GetFunction());
+  NanAssignPersistent<Function>(constructor_template, ctor->GetFunction());
+  target->Set(JS_STR("Bar"), ctor->GetFunction());
 }
 
 NAN_METHOD(Bar::New) {
@@ -199,9 +199,8 @@ Bar *Bar::New(TwBar *zbar)
 
   NanScope();
 
-  Local<Value> arg = Integer::NewFromUnsigned(0);
-  Local<FunctionTemplate> constructorHandle = NanPersistentToLocal(constructor_template);
-  Local<Object> obj = constructorHandle->GetFunction()->NewInstance(1, &arg);
+  Local<Function> cons = NanNew<Function>(constructor_template);
+  Local<Object> obj = cons->NewInstance();
 
   Bar *v8bar = ObjectWrap::Unwrap<Bar>(obj);
   v8bar->bar = zbar;
@@ -260,7 +259,7 @@ void TW_CALL SetCallback(const void *value, void *clientData) {
 
   TryCatch try_catch;
 
-  Local<Function> constructorHandle = NanPersistentToLocal(cb->setter);
+  Local<Function> constructorHandle = NanNew(cb->setter);
   constructorHandle->Call(Context::GetCurrent()->Global(), 1, argv);
 
   if (try_catch.HasCaught())
@@ -284,7 +283,7 @@ void TW_CALL GetCallback(void *value, void *clientData) {
   // Local<Context> ctx=Context::GetCurrent();
   // Local<Object> global=ctx->Global();
   // cout<<"global context: "<<*ctx<<" global object: "<<*global<<endl;
-  Local<Function> fct=NanPersistentToLocal(cb->getter);
+  Local<Function> fct=NanNew(cb->getter);
   // Handle<Value> name=fct->GetName();
   // String::AsciiValue str(name);
   // cout<<"getter name: "<<*str<<" callable? "<<fct->IsCallable()<<" function? "<<fct->IsFunction()<<endl;
@@ -393,7 +392,7 @@ void TW_CALL SetButtonCallback(void *clientData) {
 
   TryCatch try_catch;
 
-  Local<Function> constructorHandle = NanPersistentToLocal(cb->setter);
+  Local<Function> constructorHandle = NanNew(cb->setter);
   constructorHandle->Call(Context::GetCurrent()->Global(), 1, argv);
 
   if (try_catch.HasCaught())
@@ -414,13 +413,11 @@ NAN_METHOD(Bar::AddVar) {
   callbacks->name=strdup(*name);
   callbacks->type=type;
   if(!getter->IsUndefined()) {
-    NanInitPersistent(Function,_getter,getter);
-    NanAssignPersistent(Function, callbacks->getter, _getter);
+    NanAssignPersistent(callbacks->getter, getter);
     // cout<<"[AddVarRW] adding getter "<<endl;
   }
   if(!setter->IsUndefined()) {
-    NanInitPersistent(Function,_setter,setter);
-    NanAssignPersistent(Function, callbacks->setter, _setter);
+    NanAssignPersistent(callbacks->setter, setter);
     // cout<<"[AddVarRW] adding setter "<<endl;
   }
 
@@ -471,8 +468,7 @@ NAN_METHOD(Bar::AddButton) {
     callbacks=new CB();
     bar->cbs.push_back(callbacks);
     callbacks->name=strdup(*name);
-    NanInitPersistent(Function,_setter,cb);
-    NanAssignPersistent(Function, callbacks->setter, _setter);
+    NanAssignPersistent(callbacks->setter, cb);
   }
 
   TwAddButton(bar->bar,*name,

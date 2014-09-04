@@ -70,7 +70,7 @@ NAN_METHOD(GetMonitors) {
   GLFWmonitor **monitors = glfwGetMonitors(&monitor_count);
   GLFWmonitor *primary = glfwGetPrimaryMonitor();
   const GLFWvidmode *mode, *modes;
-  
+
   Local<Array> js_monitors = Array::New(monitor_count);
   Local<Object> js_monitor, js_mode;
   Local<Array> js_modes;
@@ -78,22 +78,22 @@ NAN_METHOD(GetMonitors) {
     js_monitor = Object::New();
     js_monitor->Set(JS_STR("is_primary"), JS_BOOL(monitors[i] == primary));
     js_monitor->Set(JS_STR("index"), JS_INT(i));
-    
+
     js_monitor->Set(JS_STR("name"), JS_STR(glfwGetMonitorName(monitors[i])));
-    
+
     glfwGetMonitorPos(monitors[i], &xpos, &ypos);
     js_monitor->Set(JS_STR("pos_x"), JS_INT(xpos));
     js_monitor->Set(JS_STR("pos_y"), JS_INT(ypos));
-    
+
     glfwGetMonitorPhysicalSize(monitors[i], &width, &height);
     js_monitor->Set(JS_STR("width_mm"), JS_INT(width));
     js_monitor->Set(JS_STR("height_mm"), JS_INT(height));
-    
+
     mode = glfwGetVideoMode(monitors[i]);
     js_monitor->Set(JS_STR("width"), JS_INT(mode->width));
     js_monitor->Set(JS_STR("height"), JS_INT(mode->height));
     js_monitor->Set(JS_STR("rate"), JS_INT(mode->refreshRate));
-    
+
     modes = glfwGetVideoModes(monitors[i], &mode_count);
     js_modes = Array::New(mode_count);
     for(j=0; j<mode_count; j++){
@@ -105,10 +105,10 @@ NAN_METHOD(GetMonitors) {
       js_modes->Set(JS_INT(j), js_mode);
     }
     js_monitor->Set(JS_STR("modes"), js_modes);
-    
+
     js_monitors->Set(JS_INT(i), js_monitor);
   }
-  
+
   NanReturnValue(js_monitors);
 }
 
@@ -120,8 +120,8 @@ bool windowCreated=false;
 void NAN_INLINE(CallEmitter(int argc, Handle<Value> argv[])) {
   NanScope();
   // MakeCallback(glfw_events, "emit", argc, argv);
-  if(NanPersistentToLocal(glfw_events)->Has(NanSymbol("emit"))) {
-    Local<Function> callback = NanPersistentToLocal(glfw_events)->Get(NanSymbol("emit")).As<Function>();
+  if(NanNew(glfw_events)->Has(JS_STR("emit"))) {
+    Local<Function> callback = NanNew(glfw_events)->Get(JS_STR("emit")).As<Function>();
 
     if (!callback.IsEmpty()) {
       callback->Call(Context::GetCurrent()->Global(),argc,argv);
@@ -240,21 +240,21 @@ static int jsKeyCode[]={
 /*GLFW_KEY_ESCAPE*/       27,
 /*GLFW_KEY_ENTER*/        13,
 /*GLFW_KEY_TAB*/          9,
-/*GLFW_KEY_BACKSPACE*/    8,    
+/*GLFW_KEY_BACKSPACE*/    8,
 /*GLFW_KEY_INSERT*/       45,
 /*GLFW_KEY_DELETE*/       46,
 /*GLFW_KEY_RIGHT*/        39,
 /*GLFW_KEY_LEFT*/         37,
 /*GLFW_KEY_DOWN*/         40,
 /*GLFW_KEY_UP*/           38,
-/*GLFW_KEY_PAGE_UP*/      33,  
-/*GLFW_KEY_PAGE_DOWN*/    34,   
+/*GLFW_KEY_PAGE_UP*/      33,
+/*GLFW_KEY_PAGE_DOWN*/    34,
 /*GLFW_KEY_HOME*/         36,
 /*GLFW_KEY_END*/          35,
-/*GLFW_KEY_CAPS_LOCK*/    20,    
-/*GLFW_KEY_SCROLL_LOCK*/  145,      
-/*GLFW_KEY_NUM_LOCK*/     144,   
-/*GLFW_KEY_PRINT_SCREEN*/ 144, /* TODO */       
+/*GLFW_KEY_CAPS_LOCK*/    20,
+/*GLFW_KEY_SCROLL_LOCK*/  145,
+/*GLFW_KEY_NUM_LOCK*/     144,
+/*GLFW_KEY_PRINT_SCREEN*/ 144, /* TODO */
 /*GLFW_KEY_PAUSE*/        19,
 /*GLFW_KEY_F1*/           112,
 /*GLFW_KEY_F2*/           113,
@@ -265,7 +265,7 @@ static int jsKeyCode[]={
 /*GLFW_KEY_F7*/           118,
 /*GLFW_KEY_F8*/           119,
 /*GLFW_KEY_F9*/           120,
-/*GLFW_KEY_F10*/          121,   
+/*GLFW_KEY_F10*/          121,
 /*GLFW_KEY_F11*/          122,
 /*GLFW_KEY_F12*/          123,
 /*GLFW_KEY_F13*/          123, /* unknown */
@@ -293,19 +293,19 @@ static int jsKeyCode[]={
 /*GLFW_KEY_KP_9*/         105,
 /*GLFW_KEY_KP_DECIMAL*/   110,
 /*GLFW_KEY_KP_DIVIDE*/    111,
-/*GLFW_KEY_KP_MULTIPLY*/  106, 
-/*GLFW_KEY_KP_SUBTRACT*/  109, 
+/*GLFW_KEY_KP_MULTIPLY*/  106,
+/*GLFW_KEY_KP_SUBTRACT*/  109,
 /*GLFW_KEY_KP_ADD*/       107,
 /*GLFW_KEY_KP_ENTER*/     13,
 /*GLFW_KEY_KP_EQUAL*/     187,
 /*GLFW_KEY_LEFT_SHIFT*/   16,
-/*GLFW_KEY_LEFT_CONTROL*/ 17,     
-/*GLFW_KEY_LEFT_ALT*/     18,   
-/*GLFW_KEY_LEFT_SUPER*/   91,   
-/*GLFW_KEY_RIGHT_SHIFT*/  16,     
-/*GLFW_KEY_RIGHT_CONTROL*/17,       
-/*GLFW_KEY_RIGHT_ALT*/    18,   
-/*GLFW_KEY_RIGHT_SUPER*/  93,      
+/*GLFW_KEY_LEFT_CONTROL*/ 17,
+/*GLFW_KEY_LEFT_ALT*/     18,
+/*GLFW_KEY_LEFT_SUPER*/   91,
+/*GLFW_KEY_RIGHT_SHIFT*/  16,
+/*GLFW_KEY_RIGHT_CONTROL*/17,
+/*GLFW_KEY_RIGHT_ALT*/    18,
+/*GLFW_KEY_RIGHT_SUPER*/  93,
 /*GLFW_KEY_MENU*/         18
 };
 
@@ -597,7 +597,7 @@ NAN_METHOD(glfw_CreateWindow) {
   int height      = args[1]->Uint32Value();
   String::Utf8Value str(args[2]->ToString());
   int monitor_idx = args[3]->Uint32Value();
-  
+
   GLFWwindow* window = NULL;
   GLFWmonitor **monitors = NULL, *monitor = NULL;
   int monitor_count;
@@ -639,9 +639,7 @@ NAN_METHOD(glfw_CreateWindow) {
     glfwSetWindowSize(window, width,height);
 
   // Set callback functions
-  // glfw_events=Persistent<Object>::New(args.This()->Get(JS_STR("events"))->ToObject());
-  NanInitPersistent(Object,_events,args.This()->Get(JS_STR("events"))->ToObject());
-  NanAssignPersistent(Object, glfw_events, _events);
+  NanAssignPersistent(glfw_events, args.This()->Get(JS_STR("events"))->ToObject());
 
   // window callbacks
   glfwSetWindowPosCallback( window, windowPosCB );
@@ -955,7 +953,7 @@ void init(Handle<Object> target) {
   /* Time */
   JS_GLFW_SET_METHOD(GetTime);
   JS_GLFW_SET_METHOD(SetTime);
-  
+
   /* Monitor handling */
   JS_GLFW_SET_METHOD(GetMonitors);
 

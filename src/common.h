@@ -21,10 +21,10 @@
 using namespace v8;
 
 namespace {
-#define JS_STR(...) NanSymbol(__VA_ARGS__)
-#define JS_INT(val) v8::Integer::New(val)
-#define JS_NUM(val) v8::Number::New(val)
-#define JS_BOOL(val) v8::Boolean::New(val)
+#define JS_STR(...) NanNew<String>(__VA_ARGS__)
+#define JS_INT(val) NanNew<v8::Integer>(val)
+#define JS_NUM(val) NanNew<v8::Number>(val)
+#define JS_BOOL(val) NanNew<v8::Boolean>(val)
 #define JS_RETHROW(tc) v8::Local<v8::Value>::New(tc.Exception());
 
 #define REQ_ARGS(N)                                                     \

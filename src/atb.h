@@ -46,7 +46,7 @@ protected:
 
 private:
   Bar(Handle<Object> wrapper);
-  static Persistent<FunctionTemplate> constructor_template;
+  static Persistent<Function> constructor_template;
 
   TwBar *bar;
   std::vector<CB*> cbs;
@@ -71,7 +71,7 @@ protected:
 
 private:
   AntTweakBar(Handle<Object> wrapper);
-  static Persistent<FunctionTemplate> constructor_template;
+  static Persistent<Function> constructor_template;
 };
 
 } // namespace atb
