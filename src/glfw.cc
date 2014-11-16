@@ -188,7 +188,7 @@ void APIENTRY windowCloseCB(GLFWwindow *window) {
     JS_STR("quit"), // event name
   };
 
-  CallEmitter(2, argv);
+  CallEmitter(1, argv);
 }
 
 void APIENTRY windowRefreshCB(GLFWwindow *window) {

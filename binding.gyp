@@ -13,7 +13,7 @@
       'defines': [
         'VERSION=0.3.1',
       ],
-      'sources': [ 
+      'sources': [
         'src/atb.cc', 'src/glfw.cc'
       ],
       'include_dirs': [
@@ -23,10 +23,10 @@
       'conditions': [
         ['OS=="linux"', {'libraries': ['-lAntTweakBar', '<!@(pkg-config --libs glfw3 glew)']}],
         ['OS=="mac"', {
-          'libraries': ['-lAntTweakBar', '<(module_root_dir)/deps/darwin/libglfw3.a', '-lGLEW', '-framework OpenGL'],
+          'include_dirs': [ '<!@(pkg-config glfw3 glew --cflags-only-I | sed s/-I//g)','-I/usr/local/Cellar/anttweakbar/1.16/include'],
+          'libraries': [ '<!@(pkg-config --libs glfw3 glew)', '-L/usr/local/Cellar/anttweakbar/1.16/lib', '-lAntTweakBar', '-framework OpenGL']
         }],
-        ['OS=="win"',
-          {
+        ['OS=="win"', {
             'include_dirs': [
               './deps/glew/include',
               './deps/glfw/include',
@@ -38,8 +38,8 @@
               './deps/AntTweakBar/windows/lib/'
               ],
             'libraries': [
-              'glew32.lib', 
-              'glfw3dll.lib', 
+              'glew32.lib',
+              'glfw3dll.lib',
               'opengl32.lib'
               ],
             'defines' : [
