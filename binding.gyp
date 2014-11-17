@@ -4,7 +4,10 @@
   },
   'conditions': [
     # Replace gyp platform with node platform, blech
-    ['platform == "mac"', {'variables': {'platform': 'darwin'}}],
+    ['platform == "mac"', {'variables': {
+      'platform': 'darwin',
+      'ANTTWEAKBAR_ROOT': '/usr/local/Cellar/anttweakbar/1.16',
+    }}],
     ['platform == "win"', {'variables': {'platform': 'win32'}}],
   ],
   'targets': [
@@ -23,8 +26,8 @@
       'conditions': [
         ['OS=="linux"', {'libraries': ['-lAntTweakBar', '<!@(pkg-config --libs glfw3 glew)']}],
         ['OS=="mac"', {
-          'include_dirs': [ '<!@(pkg-config glfw3 glew --cflags-only-I | sed s/-I//g)','-I/usr/local/Cellar/anttweakbar/1.16/include'],
-          'libraries': [ '<!@(pkg-config --libs glfw3 glew)', '-L/usr/local/Cellar/anttweakbar/1.16/lib', '-lAntTweakBar', '-framework OpenGL']
+          'include_dirs': [ '<!@(pkg-config glfw3 glew --cflags-only-I | sed s/-I//g)','-I<(ANTTWEAKBAR_ROOT)/include'],
+          'libraries': [ '<!@(pkg-config --libs glfw3 glew)', '-L<(ANTTWEAKBAR_ROOT)/lib', '-lAntTweakBar', '-framework OpenGL']
         }],
         ['OS=="win"', {
             'include_dirs': [
