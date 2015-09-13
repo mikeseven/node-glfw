@@ -14,7 +14,7 @@ NAN_MODULE_INIT(AntTweakBar::Initialize)
 {
   Nan::HandleScope scope;
 
-  Local<FunctionTemplate> ctor = FunctionTemplate::New(AntTweakBar::New);
+  Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(AntTweakBar::New);
   ctor->InstanceTemplate()->SetInternalFieldCount(1);
   ctor->SetClassName(JS_STR("AntTweakBar"));
 
@@ -51,8 +51,8 @@ NAN_MODULE_INIT(AntTweakBar::Initialize)
 
   //DEFINE_ATB_CONSTANT(CDSTRING);
 
-  NanAssignPersistent<Function>(constructor_template, ctor->GetFunction());
-   target->Set(JS_STR("AntTweakBar"), ctor->GetFunction());
+  constructor_template.Reset(ctor->GetFunction());
+  Nan::Set(target, JS_STR("AntTweakBar"), ctor->GetFunction());
 }
 
 NAN_METHOD(AntTweakBar::New) {
@@ -150,7 +150,7 @@ NAN_METHOD(AntTweakBar::NewBar) {
   String::Utf8Value str(info[0]);
   TwBar *bar = TwNewBar(info.Length()!=1 ? "AntTweakBar" : *str);
 
-  info.GetReturnValue().Set(atb::Bar::New(bar->handle()));
+  info.GetReturnValue().Set(atb::Bar::New(bar)->handle());
 }
 
 Nan::Persistent<Function> Bar::constructor_template;
@@ -159,7 +159,7 @@ NAN_MODULE_INIT(Bar::Initialize)
 {
   Nan::HandleScope scope;
 
-  Local<FunctionTemplate> ctor = FunctionTemplate::New(Bar::New);
+  Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(Bar::New);
   ctor->InstanceTemplate()->SetInternalFieldCount(1);
   ctor->SetClassName(JS_STR("Bar"));
 
@@ -169,8 +169,8 @@ NAN_MODULE_INIT(Bar::Initialize)
   Nan::SetPrototypeMethod(ctor, "AddButton", AddButton);
   Nan::SetPrototypeMethod(ctor, "AddSeparator", AddSeparator);
 
-  NanAssignPersistent<Function>(constructor_template, ctor->GetFunction());
-  target->Set(JS_STR("Bar"), ctor->GetFunction());
+  constructor_template.Reset(ctor->GetFunction());
+  Nan::Set(target, JS_STR("Bar"), ctor->GetFunction());
 }
 
 NAN_METHOD(Bar::New) {
@@ -217,7 +217,7 @@ void TW_CALL SetCallback(const void *value, void *clientData) {
   CB *cb=static_cast<CB*>(clientData);
   // cout<<"  cb type: "<<cb->type<<endl;
 
-  Handle<Value> argv[1];
+  Local<Value> argv[1];
 
   switch(cb->type) {
   case TW_TYPE_INT8:
@@ -246,7 +246,7 @@ void TW_CALL SetCallback(const void *value, void *clientData) {
     break;
   case TW_TYPE_DIR3F: {
     const float *val=static_cast<const float*>(value);
-    Local<Array> arr=Array::New(3);
+    Local<Array> arr=Nan::New<Array>(3);
     arr->Set(0,JS_NUM(val[0]));
     arr->Set(1,JS_NUM(val[1]));
     arr->Set(2,JS_NUM(val[2]));
@@ -262,7 +262,7 @@ void TW_CALL SetCallback(const void *value, void *clientData) {
   TryCatch try_catch;
 
   Local<Function> constructorHandle = Nan::New(cb->setter);
-  constructorHandle->Call(Context::GetCurrent()->Global(), 1, argv);
+  constructorHandle->Call(v8::Isolate::GetCurrent()->GetCurrentContext()->Global(), 1, argv);
 
   if (try_catch.HasCaught())
     FatalException(try_catch);
@@ -276,8 +276,8 @@ void TW_CALL GetCallback(void *value, void *clientData) {
   CB *cb=static_cast<CB*>(clientData);
 
   // build callback values
-  Handle<Value> argv[1];
-  argv[0]=Undefined();
+  Local<Value> argv[1];
+  argv[0]=Nan::Undefined();
 
   TryCatch try_catch;
 
@@ -291,7 +291,7 @@ void TW_CALL GetCallback(void *value, void *clientData) {
   // cout<<"getter name: "<<*str<<" callable? "<<fct->IsCallable()<<" function? "<<fct->IsFunction()<<endl;
   // cout<<"  global has getter()? "<<global->Has(name->ToString())<<endl;
 
-  Local<Value> val=fct->Call(Context::GetCurrent()->Global(), 1, argv);
+  Local<Value> val=fct->Call(v8::Isolate::GetCurrent()->GetCurrentContext()->Global(), 1, argv);
 
   if (try_catch.HasCaught())
       FatalException(try_catch);
@@ -389,13 +389,13 @@ void TW_CALL SetButtonCallback(void *clientData) {
   CB *cb=static_cast<CB*>(clientData);
   //cout<<"  cb type: "<<cb->type<<endl;
 
-  Handle<Value> argv[1];
-  argv[0]=Undefined();
+  Local<Value> argv[1];
+  argv[0]=Nan::Undefined();
 
   TryCatch try_catch;
 
   Local<Function> constructorHandle = Nan::New(cb->setter);
-  constructorHandle->Call(Context::GetCurrent()->Global(), 1, argv);
+  constructorHandle->Call(v8::Isolate::GetCurrent()->GetCurrentContext()->Global(), 1, argv);
 
   if (try_catch.HasCaught())
     FatalException(try_catch);

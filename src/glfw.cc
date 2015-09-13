@@ -117,14 +117,16 @@ Nan::Persistent<Object> glfw_events;
 int lastX=0,lastY=0;
 bool windowCreated=false;
 
-void NAN_INLINE(CallEmitter(int argc, Handle<Value> argv[])) {
+void NAN_INLINE(CallEmitter(int argc, Local<Value> argv[])) {
   Nan::HandleScope scope;
   // MakeCallback(glfw_events, "emit", argc, argv);
   if(Nan::New(glfw_events)->Has(JS_STR("emit"))) {
-    Local<Function> callback = Nan::New(glfw_events)->Get(JS_STR("emit")).As<Function>();
+    // Local<Function> callback = Nan::New(glfw_events)->Get(JS_STR("emit")).As<Function>();
+    Nan::Callback callback(Nan::New(glfw_events)->Get(JS_STR("emit")).As<Function>());
 
     if (!callback.IsEmpty()) {
-      callback->Call(Context::GetCurrent()->Global(),argc,argv);
+      // callback->Call(Context::GetCurrent()->Global(),argc,argv);
+      callback.Call(argc,argv);
     }
   }
 }
@@ -139,7 +141,7 @@ void APIENTRY windowPosCB(GLFWwindow *window, int xpos, int ypos) {
   evt->Set(JS_STR("xpos"),JS_INT(xpos));
   evt->Set(JS_STR("ypos"),JS_INT(ypos));
 
-  Handle<Value> argv[2] = {
+  Local<Value> argv[2] = {
     JS_STR("window_pos"), // event name
     evt
   };
@@ -156,7 +158,7 @@ void APIENTRY windowSizeCB(GLFWwindow *window, int w, int h) {
   evt->Set(JS_STR("width"),JS_INT(w));
   evt->Set(JS_STR("height"),JS_INT(h));
 
-  Handle<Value> argv[2] = {
+  Local<Value> argv[2] = {
     JS_STR("resize"), // event name
     evt
   };
@@ -173,7 +175,7 @@ void APIENTRY windowFramebufferSizeCB(GLFWwindow *window, int w, int h) {
   evt->Set(JS_STR("width"),JS_INT(w));
   evt->Set(JS_STR("height"),JS_INT(h));
 
-  Handle<Value> argv[2] = {
+  Local<Value> argv[2] = {
     JS_STR("framebuffer_resize"), // event name
     evt
   };
@@ -184,7 +186,7 @@ void APIENTRY windowFramebufferSizeCB(GLFWwindow *window, int w, int h) {
 void APIENTRY windowCloseCB(GLFWwindow *window) {
   Nan::HandleScope scope;
 
-  Handle<Value> argv[1] = {
+  Local<Value> argv[1] = {
     JS_STR("quit"), // event name
   };
 
@@ -198,7 +200,7 @@ void APIENTRY windowRefreshCB(GLFWwindow *window) {
   evt->Set(JS_STR("type"),JS_STR("refresh"));
   evt->Set(JS_STR("window"),JS_NUM((uint64_t) window));
 
-  Handle<Value> argv[2] = {
+  Local<Value> argv[2] = {
     JS_STR("refresh"), // event name
     evt
   };
@@ -213,7 +215,7 @@ void APIENTRY windowIconifyCB(GLFWwindow *window, int iconified) {
   evt->Set(JS_STR("type"),JS_STR("iconified"));
   evt->Set(JS_STR("iconified"),JS_BOOL(iconified));
 
-  Handle<Value> argv[2] = {
+  Local<Value> argv[2] = {
     JS_STR("iconified"), // event name
     evt
   };
@@ -228,7 +230,7 @@ void APIENTRY windowFocusCB(GLFWwindow *window, int focused) {
   evt->Set(JS_STR("type"),JS_STR("focused"));
   evt->Set(JS_STR("focused"),JS_BOOL(focused));
 
-  Handle<Value> argv[2] = {
+  Local<Value> argv[2] = {
     JS_STR("focused"), // event name
     evt
   };
@@ -342,7 +344,7 @@ void APIENTRY keyCB(GLFWwindow *window, int key, int scancode, int action, int m
     evt->Set(JS_STR("keyCode"),JS_INT(key));
     evt->Set(JS_STR("charCode"),JS_INT(charCode));
 
-    Handle<Value> argv[2] = {
+    Local<Value> argv[2] = {
       JS_STR(&actionNames[action << 3]), // event name
       evt
     };
@@ -370,7 +372,7 @@ void APIENTRY cursorPosCB(GLFWwindow* window, double x, double y) {
     evt->Set(JS_STR("x"),JS_NUM(x));
     evt->Set(JS_STR("y"),JS_NUM(y));
 
-    Handle<Value> argv[2] = {
+    Local<Value> argv[2] = {
       JS_STR("mousemove"), // event name
       evt
     };
@@ -386,7 +388,7 @@ void APIENTRY cursorEnterCB(GLFWwindow* window, int entered) {
   evt->Set(JS_STR("type"),JS_STR("mouseenter"));
   evt->Set(JS_STR("entered"),JS_INT(entered));
 
-  Handle<Value> argv[2] = {
+  Local<Value> argv[2] = {
     JS_STR("mouseenter"), // event name
     evt
   };
@@ -406,7 +408,7 @@ void APIENTRY mouseButtonCB(GLFWwindow *window, int button, int action, int mods
     evt->Set(JS_STR("pageX"),JS_INT(lastX));
     evt->Set(JS_STR("pageY"),JS_INT(lastY));
 
-    Handle<Value> argv[2] = {
+    Local<Value> argv[2] = {
       JS_STR(action ? "mousedown" : "mouseup"), // event name
       evt
     };
@@ -425,7 +427,7 @@ void APIENTRY scrollCB(GLFWwindow *window, double xoffset, double yoffset) {
     evt->Set(JS_STR("wheelDeltaY"),JS_NUM(yoffset*120));
     evt->Set(JS_STR("wheelDelta"),JS_NUM(yoffset*120));
 
-    Handle<Value> argv[2] = {
+    Local<Value> argv[2] = {
       JS_STR("mousewheel"), // event name
       evt
     };
@@ -437,7 +439,7 @@ void APIENTRY scrollCB(GLFWwindow *window, double xoffset, double yoffset) {
 int APIENTRY windowCloseCB() {
   Nan::HandleScope scope;
 
-  Handle<Value> argv[1] = {
+  Local<Value> argv[1] = {
     JS_STR("quit"), // event name
   };
 

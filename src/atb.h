@@ -18,13 +18,13 @@ using namespace node;
 namespace atb {
 
 struct CB {
-  Persistent<Function> getter, setter;
+  Nan::Persistent<Function> getter, setter;
   uint32_t type;
   char *name;
   CB() : type(0), name(NULL) {}
   ~CB() {
-    getter.Dispose();
-    setter.Dispose();
+    getter.Reset();
+    setter.Reset();
     if(name) free(name);
   }
 };
@@ -32,7 +32,7 @@ struct CB {
 class Bar : public Nan::ObjectWrap {
 public:
   static Bar *New(TwBar *bar);
-  static void Initialize (Handle<Object> target);
+  static NAN_MODULE_INIT(Initialize);
 
 protected:
   static NAN_METHOD(New);
@@ -46,7 +46,7 @@ protected:
 
 private:
   Bar(Handle<Object> wrapper);
-  static Persistent<Function> constructor_template;
+  static Nan::Persistent<Function> constructor_template;
 
   TwBar *bar;
   std::vector<CB*> cbs;
@@ -54,7 +54,7 @@ private:
 
 class AntTweakBar : public Nan::ObjectWrap {
 public:
-  static void Initialize (Handle<Object> target);
+  static NAN_MODULE_INIT(Initialize);
 
 protected:
   static NAN_METHOD(New);
@@ -71,7 +71,7 @@ protected:
 
 private:
   AntTweakBar(Handle<Object> wrapper);
-  static Persistent<Function> constructor_template;
+  static Nan::Persistent<Function> constructor_template;
 };
 
 } // namespace atb
