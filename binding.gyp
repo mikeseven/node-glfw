@@ -26,11 +26,11 @@
       ],
       'conditions': [
         ['OS=="linux"', {
-        ['OS=="linux"', {'libraries': ['-lAntTweakBar', '<!@(pkg-config --libs glfw3 glew)']}],
+          'libraries': ['-lAntTweakBar', '<!@(pkg-config --libs glfw3 glew)']
         }],
         ['OS=="mac"', {
           'include_dirs': [ '<!@(pkg-config glfw3 glew --cflags-only-I | sed s/-I//g)','-I<(ANTTWEAKBAR_ROOT)/include'],
-          'libraries': [ '<!@(pkg-config --libs glfw3 glew)', '-L<(ANTTWEAKBAR_ROOT)/lib', '-lAntTweakBar', '-framework OpenGL']
+          'libraries': [ '<!@(pkg-config --libs glfw3 glew)', '-L<(ANTTWEAKBAR_ROOT)/lib', '-lAntTweakBar', '-framework OpenGL'],
           'library_dirs': ['/usr/local/lib'],
         }],
         ['OS=="win"', {
