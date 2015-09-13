@@ -29,7 +29,7 @@ struct CB {
   }
 };
 
-class Bar : public ObjectWrap {
+class Bar : public Nan::ObjectWrap {
 public:
   static Bar *New(TwBar *bar);
   static void Initialize (Handle<Object> target);
@@ -52,7 +52,7 @@ private:
   std::vector<CB*> cbs;
 };
 
-class AntTweakBar : public ObjectWrap {
+class AntTweakBar : public Nan::ObjectWrap {
 public:
   static void Initialize (Handle<Object> target);
 

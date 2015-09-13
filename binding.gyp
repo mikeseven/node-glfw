@@ -14,10 +14,11 @@
     {
       'target_name': 'glfw',
       'defines': [
-        'VERSION=0.3.1',
+        'VERSION=0.4.0',
       ],
       'sources': [
-        'src/atb.cc', 'src/glfw.cc'
+        'src/atb.cc',
+        'src/glfw.cc'
       ],
       'include_dirs': [
         "<!(node -e \"require('nan')\")",
