@@ -1,6 +1,6 @@
 {
   "name": "node-glfw",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "A NodeJS wrapper around GLFW 3.x library",
   "main": "index.js",
   "author": "Mikael Bourges-Sevenier <mikeseven@gmail.com>",
@@ -33,13 +33,13 @@
     "test": "test"
   },
   "engines": {
-    "node": "0.6.5-0.11.10"
+    "node": ">=0.6.5 <4.0.0"
   },
   "scripts": {
     "install": "node-gyp rebuild"
   },
   "dependencies": {
     "bindings": "^1.2.1",
-    "nan": "^0.8.0"
+    "nan": "^2.0.9"
   }
 }

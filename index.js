@@ -7,7 +7,7 @@ Object.defineProperty(GLFW, 'events', {
   get: function () {
     if (events) return events;
     events = new (require('events').EventEmitter);
-    
+
     var _emit=events.emit;
     events.emit=function() {
       var args = Array.prototype.slice.call(arguments);
@@ -19,7 +19,7 @@ Object.defineProperty(GLFW, 'events', {
       }
       //_emit.apply(this,args);
       events.listeners(args[0]).forEach(function(listener) {
-        listener(args[1]);        
+        listener(args[1]);
       });
     };
     return events;
@@ -27,4 +27,3 @@ Object.defineProperty(GLFW, 'events', {
   enumerable: true,
   configurable: true
 });
-

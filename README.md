@@ -30,9 +30,10 @@ Install GLEW and make sure its tests programs are working such as visualinfo. Yo
 Now you can install node-glfw, the usual way: npm install node-glfw.
 
 Installation (Windows)
--------------------------
-Copy all deps/*.lib into your <Visual Studio>/VC/lib for 32-bit libraries, and <Visual Studio>/VC/lib/amd64 for 64-bit libraries.
-Copy all deps/*.dll into <Windows>/System32.
+----------------------
+
+Have Visual Studio (Express version works fine) installed.
+Windows dependencies are bundled with this package, so `npm install node-glfw` should work out-of-box.
 
 Notes
 -----
