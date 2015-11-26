@@ -14,7 +14,7 @@
     {
       'target_name': 'glfw',
       'defines': [
-        'VERSION=0.4.2',
+        'VERSION=0.4.3',
       ],
       'sources': [
         'src/atb.cc',
@@ -51,12 +51,14 @@
               'WIN32_LEAN_AND_MEAN',
               'VC_EXTRALEAN'
             ],
-            'cflags' : [
-              '/O2','/Oy','/GL','/GF','/Gm-','/EHsc','/MT','/GS','/Gy','/GR-','/Gd'
-            ],
-            'ldflags' : [
-              '/OPT:REF','/OPT:ICF','/LTCG'
-            ],
+            'msvs_settings' : {
+              'VCCLCompilerTool' : {
+                'AdditionalOptions' : ['/O2','/Oy','/GL','/GF','/Gm-','/EHsc','/MT','/GS','/Gy','/GR-','/Gd']
+              },
+              'VCLinkerTool' : {
+                'AdditionalOptions' : ['/OPT:REF','/OPT:ICF','/LTCG']
+              },
+            },
             'conditions': [
               ['target_arch=="ia32"', {
                 'libraries': ['AntTweakBar.lib']
