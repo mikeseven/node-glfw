@@ -14,7 +14,7 @@
     {
       'target_name': 'glfw',
       'defines': [
-        'VERSION=0.4.0',
+        'VERSION=0.4.1',
       ],
       'sources': [
         'src/atb.cc',
@@ -35,18 +35,16 @@
         }],
         ['OS=="win"', {
             'include_dirs': [
-              './deps/glew/include',
-              './deps/glfw/include',
-              './deps/AntTweakBar/include'
+              './deps/include',
               ],
             'library_dirs': [
-              './deps/glew/windows/lib/<(target_arch)',
-              './deps/glfw/windows/lib-msvc120/<(target_arch)',
-              './deps/AntTweakBar/windows/lib/'
+              './deps/windows/lib/<(target_arch)',
               ],
             'libraries': [
-              'glew32.lib',
+              'FreeImage.lib',
+              'AntTweakBar64.lib',
               'glfw3dll.lib',
+              'glew32.lib',
               'opengl32.lib'
               ],
             'defines' : [
