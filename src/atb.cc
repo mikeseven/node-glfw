@@ -265,7 +265,7 @@ void TW_CALL SetCallback(const void *value, void *clientData) {
   constructorHandle->Call(v8::Isolate::GetCurrent()->GetCurrentContext()->Global(), 1, argv);
 
   if (try_catch.HasCaught())
-    FatalException(try_catch);
+    FatalException(v8::Isolate::GetCurrent(),try_catch);
 
 }
 
@@ -294,7 +294,7 @@ void TW_CALL GetCallback(void *value, void *clientData) {
   Local<Value> val=fct->Call(v8::Isolate::GetCurrent()->GetCurrentContext()->Global(), 1, argv);
 
   if (try_catch.HasCaught())
-      FatalException(try_catch);
+      FatalException(v8::Isolate::GetCurrent(),try_catch);
 
   switch(cb->type) {
   case TW_TYPE_INT8:
@@ -398,7 +398,7 @@ void TW_CALL SetButtonCallback(void *clientData) {
   constructorHandle->Call(v8::Isolate::GetCurrent()->GetCurrentContext()->Global(), 1, argv);
 
   if (try_catch.HasCaught())
-    FatalException(try_catch);
+    FatalException(v8::Isolate::GetCurrent(),try_catch);
 
 }
 
