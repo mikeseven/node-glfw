@@ -61,10 +61,11 @@ Installation (Windows)
 ----------------------
 
 Have Visual Studio (Express version works fine) installed.
-Windows dependencies are bundled with this package, so `npm install node-glfw` should work out-of-box.
+Windows dependencies are bundled with this package, so `npm install node-glfw` should work out-of-box. The binary packages for Windows on their respective web site above do work as well but you'll need to change the path in ```bindings.gyp``` to point to where you installed them, includes and libs.
 
 Notes
 -----
 - node-glfw is a just a platform binding so don't expect samples here. You should install node-webgl, which contains lots of tests and examples using node-glfw features including AntTweakBar. See node-webgl/test/cube.js for an example of using AntTweakBar with your webgl code.
+- run ```node test/test.js``` to see a colored triangle with mouse tracking in the command-line. This indicates all is installed correctly.
 
 
