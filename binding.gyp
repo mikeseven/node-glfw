@@ -14,7 +14,7 @@
     {
       'target_name': 'glfw',
       'defines': [
-        'VERSION=0.4.3',
+        'VERSION=0.4.4',
       ],
       'sources': [
         'src/atb.cc',
@@ -26,7 +26,11 @@
       ],
       'conditions': [
         ['OS=="linux"', {
-          'libraries': ['-lAntTweakBar', '<!@(pkg-config --libs glfw3 glew)']
+          'libraries': [
+            '-lAntTweakBar', '<!@(pkg-config --libs glfw3 glew)',
+            '-lXrandr','-lXinerama','-lXxf86vm','-lXcursor',
+            '-lrt','-lm'
+            ]
         }],
         ['OS=="mac"', {
           'include_dirs': [ '<!@(pkg-config glfw3 glew --cflags-only-I | sed s/-I//g)','-I<(ANTTWEAKBAR_ROOT)/include'],
