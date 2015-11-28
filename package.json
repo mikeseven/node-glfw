@@ -17,12 +17,7 @@
       "twitter": "msevenier"
     }
   ],
-  "licenses": [
-    {
-      "type": "BSD",
-      "url": "http://github.com/mikeseven/node-glfw/raw/master/LICENSES"
-    }
-  ],
+  "license" : "BSD-3-Clause",
   "repository": {
     "type": "git",
     "url": "https://github.com/mikeseven/node-glfw.git"
