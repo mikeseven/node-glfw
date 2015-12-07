@@ -37,7 +37,7 @@ Installation (Linux)
 -------------------------
 Use apt-get or similar package manager
 ```
-sudo apt-get install libxrandr-dev libxinerama-dev libxcursor-dev libfreeimage-dev libglew-dev
+sudo apt-get install libxrandr-dev libxinerama-dev libxcursor-dev libfreeimage-dev libglew-dev libxi-dev
 ```
 
 Download AntTweakBar

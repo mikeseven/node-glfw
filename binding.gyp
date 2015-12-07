@@ -28,7 +28,7 @@
         ['OS=="linux"', {
           'libraries': [
             '-lAntTweakBar', '<!@(pkg-config --libs glfw3 glew)',
-            '-lXrandr','-lXinerama','-lXxf86vm','-lXcursor',
+            '-lXrandr','-lXinerama','-lXxf86vm','-lXcursor','-lXi',
             '-lrt','-lm'
             ]
         }],
