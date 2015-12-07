@@ -30,7 +30,7 @@ Installation (Mac)
 -------------------------
 Use Homebrew
 ```
-brew install glfw3 anttweakbar glew
+brew install pkg-config glfw3 anttweakbar glew
 ```
 
 Installation (Linux)
