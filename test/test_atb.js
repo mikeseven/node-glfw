@@ -61,7 +61,8 @@ ATB.Init();
 ATB.Define(" GLOBAL help='This example shows how to integrate AntTweakBar with GLFW and OpenGL.' "); // Message added to the help bar.
 ATB.WindowSize(width, height);
 
-twBar=new ATB.NewBar("Cube");
+twBar=ATB.NewBar("Cube");
+
 var z=0.5;
 twBar.AddVar("z", ATB.TYPE_FLOAT, {
   getter: function(data){ return z; },
